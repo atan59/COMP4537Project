@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "question": "What is the result of 0.1 + 0.2 === 0.3?",
+        "choice1": "true",
+        "choice2": "false",
+        "choice3": "",
+        "choice4": "",
+        "answer": 2,
+        "category": "JavaScript"
+    },
+    {
+        "id": 2,
+        "question": "What does the escape sequence ‘\f’ stand for?",
+        "choice1": "Floating numbers",
+        "choice2": "Representation of functions that returns a value",
+        "choice3": "Form feed",
+        "choice4": "None of the above",
+        "answer": 3,
+        "category": "JavaScript"
+    },
+    {
+        "id": 3,
+        "question": "What does 'typeof typeof(null)' return?",
+        "choice1": "Object",
+        "choice2": "undefined",
+        "choice3": "String",
+        "choice4": "None of the above",
+        "answer": 3,
+        "category": "JavaScript"
+    },
+    {
+        "id": 4,
+        "question": "What does 'typeof(() => undefined) ' return?",
+        "choice1": "Object",
+        "choice2": "Function",
+        "choice3": "undefined",
+        "choice4": "null",
+        "answer": 2,
+        "category": "JavaScript"
+    },
+    {
+        "id": 5,
+        "question": "What will console.log(!!{}) return in console?",
+        "choice1": "undefined",
+        "choice2": "!!{}",
+        "choice3": "true",
+        "choice4": "false",
+        "answer": 3,
+        "category": "JavaScript"
+    },
+    {
+        "id": 6,
+        "question": "Which of the following is not a void element in HTML?",
+        "choice1": "br",
+        "choice2": "img",
+        "choice3": "iframe",
+        "choice4": "hr",
+        "answer": 3,
+        "category": "HTML"
+    },
+    {
+        "id": 7,
+        "question": "Which is incorrect regarding global attributes in HTML?",
+        "choice1": "There are only 3 global attributes: id, class, and style",
+        "choice2": "Global attributes can be used with all HTML elements",
+        "choice3": "An HTML element can have the same name for an id and a class",
+        "choice4": "Global attributes do not have broad support across browsers",
+        "answer": 1,
+        "category": "HTML"
+    },
+    {
+        "id": 8,
+        "question": "Which HTML element is used to display a scalar measurement within a range?",
+        "choice1": "<range>",
+        "choice2": "<meter>",
+        "choice3": "<gauge>",
+        "choice4": "<measure>",
+        "answer": 2,
+        "category": "HTML"
+    },
+    {
+        "id": 9,
+        "question": "Text within <EM> … </EM> tag is displayed as ________",
+        "choice1": "bold text",
+        "choice2": "indented text",
+        "choice3": "list text",
+        "choice4": "italic text",
+        "answer": 4,
+        "category": "HTML"
+    },
+    {
+        "id": 10,
+        "question": "What is the correct HTML for making a text area?",
+        "choice1": "<input type='textbox' />",
+        "choice2": "<input type='textarea' />",
+        "choice3": "<textarea>",
+        "choice4": "<textbox>",
+        "answer": 3,
+        "category": "HTML"
+    }
+]
