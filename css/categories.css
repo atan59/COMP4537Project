@@ -1,0 +1,28 @@
+.fa-js,
+.fa-html5,
+.fa-css3,
+.fa-linux,
+.fa-docker,
+.fa-python,
+.fa-blender {
+    font-size: 3rem;
+    margin-left: 1rem;
+}
+
+/* #javascript-btn,
+#html-btn,
+#css-btn,
+#linux-btn,
+#docker-btn,
+#python-btn {
+    background: linear-gradient(90deg, rgb(255, 247, 9) 0%, rgb(240, 221, 6) 100%);
+}
+
+#javascript-btn:hover,
+#html-btn:hover,
+#css-btn:hover,
+#linux-btn:hover,
+#docker-btn:hover,
+#python-btn:hover {
+    box-shadow: 0 0.4rem 1.4rem 0 rgba(255, 255, 0, 0.5);
+} */

@@ -7,7 +7,8 @@ const app = express();
 const port = 3000;
 
 // Endpoints
-const getEndPoint = '/API/v1/questions';
+const getAllEndPoint = '/API/v1/questions';
+const getQuestionByIDEndPoint = '/API/v1/questions/:id'
 
 // const port = process.env.PORT || 8888;
 const db = mysql.createConnection({
@@ -25,16 +26,39 @@ app.use((req, res, next) => {
     next();
 });
 
-// Get request
-app.get(getEndPoint, (req, res) => {
+// Get request (ALL) or By Category
+app.get(getAllEndPoint, (req, res) => {
+    let q = url.parse(req.url, true);
+    let sql = "";
+    if (Object.keys(q.query).length === 0) {
+        sql = "SELECT * FROM question";
+    } else {
+        sql = `SELECT * FROM question WHERE category = '${q.query.category}'`;
+    }
+
     db.connect(() => {
-        db.query(`SELECT * FROM question`, (err, result) => {
+        db.query(sql, (err, result) => {
             if (err) {
                 console.error(err);
                 throw err;
             }
             res.statusCode = 200;
-            res.header('Content-Type', 'application/json')
+            res.header('Content-Type', 'application/json');
+            res.end(JSON.stringify(result));
+        })
+    })
+})
+
+// Get request (by ID)
+app.get(getQuestionByIDEndPoint, (req, res) => {
+    db.connect(() => {
+        db.query(`SELECT * FROM question WHERE id = ${req.params.id}`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
             res.end(JSON.stringify(result));
         })
     })
