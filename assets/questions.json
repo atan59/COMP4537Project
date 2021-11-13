@@ -4,8 +4,8 @@
         "question": "What is the result of 0.1 + 0.2 === 0.3 in JavaScript?",
         "choice1": "true",
         "choice2": "false",
-        "choice3": "",
-        "choice4": "",
+        "choice3": "undefined",
+        "choice4": "null",
         "answer": 2,
         "category": "JavaScript"
     },
@@ -301,7 +301,7 @@
     },
     {
         "id": 31,
-        "question": "What will happen If you run the command \"init 1\" in your terminal",
+        "question": "What will happen if you run the command 'init 1' in your terminal",
         "choice1": "Reboot the system",
         "choice2": "Shut down the system",
         "choice3": "Enter single user mode",
