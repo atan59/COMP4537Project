@@ -2,6 +2,7 @@ const express = require('express');
 const url = require('url');
 const mysql = require('mysql');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
@@ -9,6 +10,21 @@ const port = 3000;
 // Endpoints
 const getAllEndPoint = '/API/v1/questions';
 const getQuestionByIDEndPoint = '/API/v1/questions/:id'
+const getStats = '/API/v1/stats';
+
+// Globals
+const endpointStats = [
+    {
+        method: 'GET',
+        endpoint: getAllEndPoint,
+        requests: 0
+    },
+    {
+        method: 'GET',
+        endpoint: getQuestionByIDEndPoint.replace(':', ''),
+        requests: 0
+    }
+];
 
 // const port = process.env.PORT || 8888;
 const db = mysql.createConnection({
@@ -44,6 +60,7 @@ app.get(getAllEndPoint, (req, res) => {
             }
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
         })
     })
@@ -59,7 +76,45 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
             }
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.endpoint === getQuestionByIDEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
+        })
+    })
+})
+
+// Get stats for all endpoints
+app.get(getStats, (req, res) => {
+    res.statusCode = 200;
+    res.header('Content-Type', 'application/json');
+    res.end(JSON.stringify(endpointStats));
+})
+
+app.get('/', (req, res) => {
+    // LEAVE FOR REGISTRATION
+    // const username = 'admin';
+    // const saltRounds = 10;
+    // const password = '1234abcd';
+    // bcrypt.hash(password, saltRounds, (err, hash) => {
+    //     console.log(hash);
+    //     db.connect(() => {
+    //         db.query(`INSERT INTO user (username, password) VALUES ('${username}', '${hash}')`)
+    //     })
+    // })
+    const username = 'admin';
+    const pass = '1234abcd';
+    db.connect(() => {
+        db.query(`SELECT * FROM user WHERE username = '${username}'`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            bcrypt.compare(pass, result[0].password, (err, result) => {
+                if (err) {
+                    console.error(err);
+                    throw err;
+                }
+                console.log(result);
+            })
         })
     })
 })

@@ -1,0 +1,26 @@
+body {
+  color: #fff;
+}
+
+#endpointsTable {
+  /* list-style: none;
+    margin-bottom: 4rem; */
+}
+
+table {
+    margin-bottom: 6rem;
+}
+
+th {
+  font-size: 5.4rem;
+  color: #fff;
+  margin-bottom: 5rem;
+  padding-right: 3rem;
+}
+
+.end-point {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  padding-top: 2rem;
+}
