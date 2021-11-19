@@ -10,7 +10,8 @@ const port = 3000;
 // Endpoints
 const getAllEndPoint = '/API/v1/questions';
 const getQuestionByIDEndPoint = '/API/v1/questions/:id'
-const getStats = '/API/v1/stats';
+const getStatsEndPoint = '/API/v1/stats';
+const loginEndPoint = '/API/v1/login';
 
 // Globals
 const endpointStats = [
@@ -33,6 +34,18 @@ const db = mysql.createConnection({
     password: 'P@$$w0rd',
     database: 's2projectdb'
 });
+
+db.promise = sql => {
+    return new Promise((resolve, reject) => {
+        db.query(sql, (err, result) => {
+            if (err) {
+                reject(new Error());
+                return;
+            }
+            resolve(result);
+        })
+    })
+}
 
 app.use((req, res, next) => {
     res.header('Content-Type', 'text/html');
@@ -83,13 +96,13 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
 })
 
 // Get stats for all endpoints
-app.get(getStats, (req, res) => {
+app.get(getStatsEndPoint, (req, res) => {
     res.statusCode = 200;
     res.header('Content-Type', 'application/json');
     res.end(JSON.stringify(endpointStats));
 })
 
-app.get('/', (req, res) => {
+app.post(loginEndPoint, (req, res) => {
     // LEAVE FOR REGISTRATION
     // const username = 'admin';
     // const saltRounds = 10;
@@ -100,20 +113,35 @@ app.get('/', (req, res) => {
     //         db.query(`INSERT INTO user (username, password) VALUES ('${username}', '${hash}')`)
     //     })
     // })
-    const username = 'admin';
-    const pass = '1234abcd';
-    db.connect(() => {
-        db.query(`SELECT * FROM user WHERE username = '${username}'`, (err, result) => {
-            if (err) {
-                console.error(err);
-                throw err;
-            }
-            bcrypt.compare(pass, result[0].password, (err, result) => {
+    let body = "";
+
+    req.on('data', chunk => {
+        if (chunk != null) body += chunk;
+    })
+
+    req.on('end', () => {
+        const loginCredentials = JSON.parse(body);
+        db.connect(() => {
+            db.query(`SELECT * FROM user WHERE username = '${loginCredentials.username}'`, (err, result) => {
                 if (err) {
                     console.error(err);
                     throw err;
                 }
-                console.log(result);
+                if (Array.isArray(result) && result.length !== 0) {
+                    bcrypt.compare(loginCredentials.password, result[0].password, (err, result) => {
+                        if (err) {
+                            console.error(err);
+                            throw err;
+                        }
+                        res.statusCode = 200;
+                        res.header('Content-Type', 'application/json');
+                        res.end(JSON.stringify(result));
+                    })
+                } else {
+                    res.statusCode = 404;
+                    res.header('Content-Type', 'application/json');
+                    res.end(JSON.stringify(false));
+                }
             })
         })
     })
