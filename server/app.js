@@ -135,13 +135,12 @@ app.post(loginEndPoint, (req, res) => {
                         }
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
-                        res.end(JSON.stringify(result));
+                        res.end(JSON.stringify({ authorized: result }));
                     })
                 } else {
-                    // 401 for unauthorized users
-                    res.statusCode = 4-1;
+                    res.statusCode = 401;
                     res.header('Content-Type', 'application/json');
-                    res.end(JSON.stringify(false));
+                    res.end(JSON.stringify({ authorized: false }));
                 }
             })
         })

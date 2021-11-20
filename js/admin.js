@@ -51,13 +51,13 @@ handleLogin = async e => {
     });
     if (response.ok) {
         const result = await response.json();
-        if (result) {
+        if (result.authorized) {
             mainContainer.style.display = 'flex';
             formContainer.style.display = 'none';
             return;
         }
-        notyf.error('Your credentials do not match our records');
     }
+    notyf.error('Your credentials do not match our records');
 }
 
 // Event Listeners
