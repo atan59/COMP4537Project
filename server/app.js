@@ -12,6 +12,8 @@ const getAllEndPoint = '/API/v1/questions';
 const getQuestionByIDEndPoint = '/API/v1/questions/:id'
 const getStatsEndPoint = '/API/v1/stats';
 const loginEndPoint = '/API/v1/login';
+const AllScoresEndPoint = '/API/v1/scores';
+const getScoresByIDEndPoint = '';
 
 // Globals
 const endpointStats = [
@@ -23,6 +25,16 @@ const endpointStats = [
     {
         method: 'GET',
         endpoint: getQuestionByIDEndPoint.replace(':', ''),
+        requests: 0
+    },
+    {
+        method: 'GET',
+        endpoint: AllScoresEndPoint,
+        requests: 0
+    },
+    {
+        method: 'POST',
+        endpoint: AllScoresEndPoint,
         requests: 0
     }
 ];
@@ -122,6 +134,58 @@ app.post(loginEndPoint, (req, res) => {
     req.on('end', () => {
         const loginCredentials = JSON.parse(body);
         db.connect(() => {
+            db.query(`SELECT * FROM user WHERE username = '${loginCredentials.username}'`, (err, result) => {
+                if (err) {
+                    console.error(err);
+                    throw err;
+                }
+                if (Array.isArray(result) && result.length !== 0) {
+                    bcrypt.compare(loginCredentials.password, result[0].password, (err, result) => {
+                        if (err) {
+                            console.error(err);
+                            throw err;
+                        }
+                        res.statusCode = 200;
+                        res.header('Content-Type', 'application/json');
+                        res.end(JSON.stringify({ authorized: result }));
+                    })
+                } else {
+                    res.statusCode = 401;
+                    res.header('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ authorized: false }));
+                }
+            })
+        })
+    })
+})
+
+app.get(AllScoresEndPoint, (req, res) => {
+    db.connect(() => {
+        db.query(`SELECT * FROM score`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
+            res.end(JSON.stringify(result));
+        })
+    })
+})
+
+app.post(AllScoresEndPoint, (req, res) => {
+    let body = "";
+
+    req.on('data', chunk => {
+        if (chunk != null) body += chunk;
+    })
+
+    req.on('end', () => {
+        const userCredentials = JSON.parse(body);
+        console.log(userCredentials);
+        db.connect(() => {
+            db.query(`INSE`)
             db.query(`SELECT * FROM user WHERE username = '${loginCredentials.username}'`, (err, result) => {
                 if (err) {
                     console.error(err);
