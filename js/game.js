@@ -25,7 +25,7 @@ startGame = async () => {
 
     if (localStorage.getItem('category')) url += `/?category=${localStorage.getItem('category')}`;
     
-    let response = await fetch(url);
+    response = await fetch(url);
     if (response.ok) {
         questions = await response.json();
         console.log(questions);

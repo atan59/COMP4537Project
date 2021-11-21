@@ -24,11 +24,11 @@ const endpointStats = [
         endpoint: getAllEndPoint,
         requests: 0
     },
-    {
-        method: 'GET',
-        endpoint: getQuestionByIDEndPoint.replace(':', ''),
-        requests: 0
-    },
+    // {
+    //     method: 'GET',
+    //     endpoint: getQuestionByIDEndPoint.replace(':', ''),
+    //     requests: 0
+    // },
     {
         method: 'GET',
         endpoint: AllScoresEndPoint,
@@ -293,27 +293,15 @@ app.post(AllScoresEndPoint, (req, res) => {
         const userCredentials = JSON.parse(body);
         console.log(userCredentials);
         db.connect(() => {
-            db.query(`INSE`)
-            db.query(`SELECT * FROM user WHERE username = '${loginCredentials.username}'`, (err, result) => {
+            db.query(`INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.score}')`, (err, result) => {
                 if (err) {
                     console.error(err);
                     throw err;
                 }
-                if (Array.isArray(result) && result.length !== 0) {
-                    bcrypt.compare(loginCredentials.password, result[0].password, (err, result) => {
-                        if (err) {
-                            console.error(err);
-                            throw err;
-                        }
-                        res.statusCode = 200;
-                        res.header('Content-Type', 'application/json');
-                        res.end(JSON.stringify({ authorized: result }));
-                    })
-                } else {
-                    res.statusCode = 401;
-                    res.header('Content-Type', 'application/json');
-                    res.end(JSON.stringify({ authorized: false }));
-                }
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
+                res.end(JSON.stringify(result));
             })
         })
     })

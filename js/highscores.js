@@ -1,7 +1,20 @@
 // Constants
 const highScoresList = document.querySelector('#highScoresList');
-const highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+const url = 'http://localhost:3000/API/v1/scores';
 
-highScoresList.innerHTML = highScores.map(score => {
-    return `<li class="high-score">${score.name} - ${score.score}</li>`
-}).join('');
+// Globals
+let highScores = [];
+let response = null;
+
+const getHighScores = async () => {
+    response = await fetch(url);
+    if (response.ok) {
+        highScores = await response.json();
+
+        highScoresList.innerHTML = highScores.map(score => {
+            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+        }).join('');
+    }
+}
+
+getHighScores();

@@ -7,12 +7,7 @@ const dockerBtn = document.getElementById('docker-btn');
 const pythonBtn = document.getElementById('python-btn');
 const mixedBtn = document.getElementById('mixed-btn');
 
-sendCategory = category => {
-    localStorage.clear();
-    console.log('hi');
-    console.log(category);
-    if (category !== '') localStorage.setItem('category', category);
-}
+sendCategory = category => localStorage.setItem('category', category)
 
 // Event Listeners
 javascriptBtn.addEventListener('click', () => sendCategory('JavaScript'));
