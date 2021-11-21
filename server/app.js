@@ -3,6 +3,8 @@ const url = require('url');
 const mysql = require('mysql');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const port = 3000;
@@ -47,6 +49,24 @@ const db = mysql.createConnection({
     database: 's2projectdb'
 });
 
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: "Quiz API",
+            description: "A simple Express Quiz API that provides questions and answers on a wide variety of technical topics to let you test your knowledge.",
+            contact: {
+                name: "COMP-4537 Team S2"
+            },
+            servers: ["http://localhost:3000"]
+        }
+    },
+    apis: ["app.js"]
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerDocs));
+
 db.promise = sql => {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
@@ -68,6 +88,19 @@ app.use((req, res, next) => {
 });
 
 // Get request (ALL) or By Category
+/**
+ * @swagger
+ * /API/v1/questions:
+ *  get:
+ *      description: Used to get all questions or all questions in a specific category.
+ *      parameters:
+ *          - name: category
+ *            in: query
+ *            required: false
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ */
 app.get(getAllEndPoint, (req, res) => {
     let q = url.parse(req.url, true);
     let sql = "";
@@ -92,6 +125,19 @@ app.get(getAllEndPoint, (req, res) => {
 })
 
 // Get request (by ID)
+/**
+ * @swagger
+ * /API/v1/questions/{id}:
+ *  get:
+ *      description: Used to get a question by its id.
+ *      parameters:
+ *          - name: id
+ *            in: path
+ *            required: true
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ */
 app.get(getQuestionByIDEndPoint, (req, res) => {
     db.connect(() => {
         db.query(`SELECT * FROM question WHERE id = ${req.params.id}`, (err, result) => {
@@ -108,12 +154,43 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
 })
 
 // Get stats for all endpoints
+/**
+ * @swagger
+ * /API/v1/stats:
+ *  get:
+ *      description: Used to get all the statistics for all the endpoints.
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ */
 app.get(getStatsEndPoint, (req, res) => {
     res.statusCode = 200;
     res.header('Content-Type', 'application/json');
     res.end(JSON.stringify(endpointStats));
 })
 
+/**
+ * @swagger
+ * /API/v1/login:
+ *  post:
+ *      description: Used to post a login request.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          username:
+ *                              type: string
+ *                          password:
+ *                              type: string
+ *      responses:
+ *          "200":
+ *              description: Successfully made the POST request.
+ *          "401":
+ *              description: Login has failed. User unauthorized to make POST request.
+ */
 app.post(loginEndPoint, (req, res) => {
     // LEAVE FOR REGISTRATION
     // const username = 'admin';
@@ -159,6 +236,15 @@ app.post(loginEndPoint, (req, res) => {
     })
 })
 
+/**
+ * @swagger
+ * /API/v1/scores:
+ *  get:
+ *      description: Used to get all player scores.
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ */
 app.get(AllScoresEndPoint, (req, res) => {
     db.connect(() => {
         db.query(`SELECT * FROM score`, (err, result) => {
@@ -174,6 +260,28 @@ app.get(AllScoresEndPoint, (req, res) => {
     })
 })
 
+/**
+ * @swagger
+ * /API/v1/scores:
+ *  post:
+ *      description: Used to post a logged in user's score.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          username:
+ *                              type: string
+ *                          password:
+ *                              type: string
+ *      responses:
+ *          "200":
+ *              description: Successfully made the POST request.
+ *          "401":
+ *              description: User is unauthorized and unable to make POST request.
+ */
 app.post(AllScoresEndPoint, (req, res) => {
     let body = "";
 
