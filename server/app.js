@@ -208,6 +208,7 @@ app.get(getStatsEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
+ *                  The response from the POST request is a boolean called "authorized" that shows whether or not the user is authorized or not.
  *          "400":
  *              description: Unable to make the POST request because of an incorrect request body.
  *                  This could be because of either a missing username or password field in the request body.
