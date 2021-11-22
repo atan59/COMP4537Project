@@ -277,14 +277,18 @@ app.get(AllScoresEndPoint, (req, res) => {
  *                  schema:
  *                      type: object
  *                      properties:
- *                          username:
+ *                          uuid:
  *                              type: string
- *                              description: The user's username
- *                              example: admin
- *                          password:
+ *                              description: The user's uuid
+ *                              example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
+ *                          name:
  *                              type: string
- *                              description: The user's password
- *                              example: 1234abcd
+ *                              description: The user's name
+ *                              example: Alkarim
+ *                          highscore:
+ *                              type: integer
+ *                              description: The user's score
+ *                              example: 300
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
