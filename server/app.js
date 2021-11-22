@@ -53,10 +53,10 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: "3.0.0",
         info: {
-            title: "Quiz API",
+            title: "[Team S2] Quiz API",
             description: "A simple Express Quiz API that provides questions and answers on a wide variety of technical topics to let you test your knowledge.",
             contact: {
-                name: "COMP-4537 Team S2"
+                name: "COMP-4537 [Team S2]"
             },
             servers: ["http://localhost:3000"]
         }
@@ -65,8 +65,8 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve);
-app.get('/api-docs', swaggerUi.setup(swaggerDocs));
+app.use('/documentation', swaggerUi.serve);
+app.get('/documentation', swaggerUi.setup(swaggerDocs));
 
 db.promise = sql => {
     return new Promise((resolve, reject) => {
@@ -101,6 +101,8 @@ app.use((req, res, next) => {
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
+ *                  If a category has not been specified, the request will return an array of all the quiz questions with their possible answers.
+ *                  If a category has been specified, the request will return an array of the quiz questions in that category with their possible answers.
  */
 app.get(getAllEndPoint, (req, res) => {
     let q = url.parse(req.url, true);
@@ -138,6 +140,11 @@ app.get(getAllEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
+ *                  The request will return the question object with the specified id.
+ *          "400":
+ *              description: Unable to make the GET request.
+ *                  The id that has been passed does not match the format we have defined.
+ *                  The id should be an integer (ex. 1, 2, 14, etc.).
  */
 app.get(getQuestionByIDEndPoint, (req, res) => {
     if (isNaN(req.params.id)) {
@@ -169,6 +176,8 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
+ *                  This request will return an array with the statistics about each of our API endpoints.
+ *                  Each object in the array contains the request method, the request endpoint, and how many requests have been made to that endpoint during the lifetime of the server.
  */
 app.get(getStatsEndPoint, (req, res) => {
     res.statusCode = 200;
@@ -199,8 +208,12 @@ app.get(getStatsEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
+ *          "400":
+ *              description: Unable to make the POST request because of an incorrect request body.
+ *                  This could be because of either a missing username or password field in the request body.
+ *                  The error could also be caused by having extra fields in the request body.
  *          "401":
- *              description: Login has failed. User unauthorized to make POST request.
+ *              description: Login has failed. User is unauthorized to make the POST request.
  */
 app.post(loginEndPoint, (req, res) => {
     // LEAVE FOR REGISTRATION
@@ -261,6 +274,8 @@ app.post(loginEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
+ *                  This request will return an array of all the user highscores.
+ *                  Each object in the array will have an id, a user id, the user's name, and the user's highscore.
  */
 app.get(AllScoresEndPoint, (req, res) => {
     db.connect(() => {
@@ -304,8 +319,13 @@ app.get(AllScoresEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
+ *                  The response for the POST request is the stringified response from the mySQL database after the new row as been inserted.
+ *          "400":
+ *              description: Unable to make the POST request because of an incorrect request body.
+ *                  This could be because of either a missing uuid, name, or highscore field in the request body.
+ *                  The error could also be caused by having extra fields in the request body.
  *          "401":
- *              description: User is unauthorized and unable to make POST request.
+ *              description: User is unauthorized and unable to make the POST request.
  */
 app.post(AllScoresEndPoint, (req, res) => {
     let body = "";
