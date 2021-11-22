@@ -51,6 +51,7 @@ const db = mysql.createConnection({
 
 const swaggerOptions = {
     swaggerDefinition: {
+        openapi: "3.0.0",
         info: {
             title: "Quiz API",
             description: "A simple Express Quiz API that provides questions and answers on a wide variety of technical topics to let you test your knowledge.",
@@ -183,8 +184,12 @@ app.get(getStatsEndPoint, (req, res) => {
  *                      properties:
  *                          username:
  *                              type: string
+ *                              description: The user's username
+ *                              example: admin
  *                          password:
  *                              type: string
+ *                              description: The user's password
+ *                              example: 1234abcd
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
@@ -274,8 +279,12 @@ app.get(AllScoresEndPoint, (req, res) => {
  *                      properties:
  *                          username:
  *                              type: string
+ *                              description: The user's username
+ *                              example: admin
  *                          password:
  *                              type: string
+ *                              description: The user's password
+ *                              example: 1234abcd
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
