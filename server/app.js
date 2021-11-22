@@ -318,7 +318,7 @@ app.post(AllScoresEndPoint, (req, res) => {
         const userCredentials = JSON.parse(body);
         console.log(userCredentials);
 
-        if (typeof(userCredentials.uuid) != 'string' || typeof(userCredentials.uuid) != 'string' || typeof(userCredentials.score) != 'number') {
+        if (typeof(userCredentials.uuid) != 'string' || typeof(userCredentials.name) != 'string' || typeof(userCredentials.highscore) != 'number') {
             res.statusCode = 400;
             res.header('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: "Incorrect request body"}))
