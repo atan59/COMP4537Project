@@ -140,6 +140,12 @@ app.get(getAllEndPoint, (req, res) => {
  *              description: Successfully made the GET request.
  */
 app.get(getQuestionByIDEndPoint, (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.statusCode = 400;
+        res.header('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: "Incorrect request body"}))
+        return
+    }
     db.connect(() => {
         db.query(`SELECT * FROM question WHERE id = ${req.params.id}`, (err, result) => {
             if (err) {
@@ -215,6 +221,12 @@ app.post(loginEndPoint, (req, res) => {
 
     req.on('end', () => {
         const loginCredentials = JSON.parse(body);
+        if (typeof(loginCredentials.username) != 'string' && typeof(loginCredentials.password) != 'string') {
+            res.statusCode = 400;
+            res.header('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: "Incorrect request body"}))
+            return
+        }
         db.connect(() => {
             db.query(`SELECT * FROM user WHERE username = '${loginCredentials.username}'`, (err, result) => {
                 if (err) {
@@ -305,6 +317,13 @@ app.post(AllScoresEndPoint, (req, res) => {
     req.on('end', () => {
         const userCredentials = JSON.parse(body);
         console.log(userCredentials);
+
+        if (typeof(userCredentials.uuid) != 'string' || typeof(userCredentials.uuid) != 'string' || typeof(userCredentials.score) != 'number') {
+            res.statusCode = 400;
+            res.header('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: "Incorrect request body"}))
+            return
+        }
         db.connect(() => {
             db.query(`INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.score}')`, (err, result) => {
                 if (err) {
