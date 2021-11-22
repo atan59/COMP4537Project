@@ -103,6 +103,37 @@ app.use((req, res, next) => {
  *              description: Successfully made the GET request.
  *                  If a category has not been specified, the request will return an array of all the quiz questions with their possible answers.
  *                  If a category has been specified, the request will return an array of the quiz questions in that category with their possible answers.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 1
+ *                                  question:
+ *                                      type: string
+ *                                      example: What is the result of 0.1 + 0.2 === 0.3 in JavaScript?
+ *                                  choice1:
+ *                                      type: string
+ *                                      example: 'true'
+ *                                  choice2:
+ *                                      type: string
+ *                                      example: 'false'
+ *                                  choice3:
+ *                                      type: string
+ *                                      example: undefined
+ *                                  choice4:
+ *                                      type: string
+ *                                      example: 'null'
+ *                                  category:
+ *                                      type: string
+ *                                      example: JavaScript
+ *                                  answer:
+ *                                      type: integer
+ *                                      example: 2
  */
 app.get(getAllEndPoint, (req, res) => {
     let q = url.parse(req.url, true);
@@ -141,10 +172,50 @@ app.get(getAllEndPoint, (req, res) => {
  *          "200":
  *              description: Successfully made the GET request.
  *                  The request will return the question object with the specified id.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 1
+ *                                  question:
+ *                                      type: string
+ *                                      example: What is the result of 0.1 + 0.2 === 0.3 in JavaScript?
+ *                                  choice1:
+ *                                      type: string
+ *                                      example: 'true'
+ *                                  choice2:
+ *                                      type: string
+ *                                      example: 'false'
+ *                                  choice3:
+ *                                      type: string
+ *                                      example: undefined
+ *                                  choice4:
+ *                                      type: string
+ *                                      example: 'null'
+ *                                  category:
+ *                                      type: string
+ *                                      example: JavaScript
+ *                                  answer:
+ *                                      type: integer
+ *                                      example: 2
  *          "400":
  *              description: Unable to make the GET request.
  *                  The id that has been passed does not match the format we have defined.
  *                  The id should be an integer (ex. 1, 2, 14, etc.).
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Incorrect request body
  */
 app.get(getQuestionByIDEndPoint, (req, res) => {
     if (isNaN(req.params.id)) {
@@ -178,6 +249,22 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
  *              description: Successfully made the GET request.
  *                  This request will return an array with the statistics about each of our API endpoints.
  *                  Each object in the array contains the request method, the request endpoint, and how many requests have been made to that endpoint during the lifetime of the server.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  method:
+ *                                      type: string
+ *                                      example: GET
+ *                                  endpoint:
+ *                                      type: string
+ *                                      example: API/v1/questions
+ *                                  requests:
+ *                                      type: integer
+ *                                      example: 1
  */
 app.get(getStatsEndPoint, (req, res) => {
     res.statusCode = 200;
@@ -209,12 +296,36 @@ app.get(getStatsEndPoint, (req, res) => {
  *          "200":
  *              description: Successfully made the POST request.
  *                  The response from the POST request is a boolean called "authorized" that shows whether or not the user is authorized or not.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              authorized:
+ *                                  type: boolean
  *          "400":
  *              description: Unable to make the POST request because of an incorrect request body.
- *                  This could be because of either a missing username or password field in the request body.
- *                  The error could also be caused by having extra fields in the request body.
+ *                  This could be because of a missing username or password field, having extra fields,
+ *                  or by sending the wrong type in the request body.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Incorrect request body
  *          "401":
- *              description: Login has failed. User is unauthorized to make the POST request.
+ *              description: Login has failed. User's credentials are incorrect and is unauthorized to make the POST request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              authorized:
+ *                                  type: boolean
+ *                                  example: false
  */
 app.post(loginEndPoint, (req, res) => {
     // LEAVE FOR REGISTRATION
@@ -277,6 +388,25 @@ app.post(loginEndPoint, (req, res) => {
  *              description: Successfully made the GET request.
  *                  This request will return an array of all the user highscores.
  *                  Each object in the array will have an id, a user id, the user's name, and the user's highscore.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 2
+ *                                  uuid:
+ *                                      type: string
+ *                                      example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
+ *                                  name:
+ *                                      type: string
+ *                                      example: Alkarim
+ *                                  highscore:
+ *                                      type: integer
+ *                                      example: 200
  */
 app.get(AllScoresEndPoint, (req, res) => {
     db.connect(() => {
@@ -321,12 +451,47 @@ app.get(AllScoresEndPoint, (req, res) => {
  *          "200":
  *              description: Successfully made the POST request.
  *                  The response for the POST request is the stringified response from the mySQL database after the new row as been inserted.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              fieldCount:
+ *                                  type: integer
+ *                                  example: 0
+ *                              affectedRows:
+ *                                  type: integer
+ *                                  example: 1
+ *                              insertId:
+ *                                  type: integer
+ *                                  example: 11
+ *                              serverStatus:
+ *                                  type: integer
+ *                                  example: 2
+ *                              warningCount:
+ *                                  type: integer
+ *                                  example: 0
+ *                              message:
+ *                                  type: string
+ *                                  example: ''
+ *                              protocol41:
+ *                                  type: boolean
+ *                              changedRows:
+ *                                  type: integer
+ *                                  example: 0 
  *          "400":
  *              description: Unable to make the POST request because of an incorrect request body.
  *                  This could be because of either a missing uuid, name, or highscore field in the request body.
  *                  The error could also be caused by having extra fields in the request body.
- *          "401":
- *              description: User is unauthorized and unable to make the POST request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Incorrect request body
  */
 app.post(AllScoresEndPoint, (req, res) => {
     let body = "";
