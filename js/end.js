@@ -27,7 +27,7 @@ saveHighScore = async e => {
     const data = {
         uuid: uuid,
         name: username.value,
-        score: mostRecentScore
+        highscore: mostRecentScore
     }
 
     response = await fetch(postScoresURL, {

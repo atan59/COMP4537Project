@@ -325,7 +325,7 @@ app.post(AllScoresEndPoint, (req, res) => {
             return
         }
         db.connect(() => {
-            db.query(`INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.score}')`, (err, result) => {
+            db.query(`INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.highscore}')`, (err, result) => {
                 if (err) {
                     console.error(err);
                     throw err;
