@@ -65,8 +65,8 @@ const swaggerOptions = {
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/documentation', swaggerUi.serve);
-app.get('/documentation', swaggerUi.setup(swaggerDocs));
+app.use('/4537/termproject/API/V1/documentation', swaggerUi.serve);
+app.get('/4537/termproject/API/V1/documentation', swaggerUi.setup(swaggerDocs));
 
 db.promise = sql => {
     return new Promise((resolve, reject) => {
