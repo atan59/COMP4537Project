@@ -427,7 +427,7 @@ app.get(AllScoresEndPoint, (req, res) => {
  * @swagger
  * /API/v1/scores:
  *  post:
- *      description: Used to post a logged in user's score.
+ *      description: Used to post a logged in user's score or get a user's scores by their uuid.
  *      requestBody:
  *          required: true
  *          content:
@@ -438,6 +438,7 @@ app.get(AllScoresEndPoint, (req, res) => {
  *                          uuid:
  *                              type: string
  *                              description: The user's uuid
+ *                              required: true
  *                              example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
  *                          name:
  *                              type: string
@@ -450,35 +451,52 @@ app.get(AllScoresEndPoint, (req, res) => {
  *      responses:
  *          "200":
  *              description: Successfully made the POST request.
- *                  The response for the POST request is the stringified response from the mySQL database after the new row as been inserted.
+ *                  The response for the POST request is the stringified response from the mySQL database after the new row has been inserted or an array of score objects pertaining to the given UUID.
  *              content:
  *                  application/json:
  *                      schema:
- *                          type: object
- *                          properties:
- *                              fieldCount:
- *                                  type: integer
- *                                  example: 0
- *                              affectedRows:
- *                                  type: integer
- *                                  example: 1
- *                              insertId:
- *                                  type: integer
- *                                  example: 11
- *                              serverStatus:
- *                                  type: integer
- *                                  example: 2
- *                              warningCount:
- *                                  type: integer
- *                                  example: 0
- *                              message:
- *                                  type: string
- *                                  example: ''
- *                              protocol41:
- *                                  type: boolean
- *                              changedRows:
- *                                  type: integer
- *                                  example: 0 
+ *                          oneOf:
+ *                              type: object
+ *                              properties:
+ *                                  fieldCount:
+ *                                      type: integer
+ *                                      example: 0
+ *                                  affectedRows:
+ *                                      type: integer
+ *                                      example: 1
+ *                                  insertId:
+ *                                      type: integer
+ *                                      example: 11
+ *                                  serverStatus:
+ *                                      type: integer
+ *                                      example: 2
+ *                                  warningCount:
+ *                                      type: integer
+ *                                      example: 0
+ *                                  message:
+ *                                      type: string
+ *                                      example: ''
+ *                                  protocol41:
+ *                                      type: boolean
+ *                                  changedRows:
+ *                                      type: integer
+ *                                      example: 0
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 2
+ *                                  uuid:
+ *                                      type: string
+ *                                      example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
+ *                                  name:
+ *                                      type: string
+ *                                      example: Alkarim
+ *                                  highscore:
+ *                                      type: integer
+ *                                      example: 200
  *          "400":
  *              description: Unable to make the POST request because of an incorrect request body.
  *                  This could be because of either a missing uuid, name, or highscore field in the request body.
@@ -495,6 +513,7 @@ app.get(AllScoresEndPoint, (req, res) => {
  */
 app.post(AllScoresEndPoint, (req, res) => {
     let body = "";
+    let sql = "";
 
     req.on('data', chunk => {
         if (chunk != null) body += chunk;
@@ -504,18 +523,29 @@ app.post(AllScoresEndPoint, (req, res) => {
         const userCredentials = JSON.parse(body);
         console.log(userCredentials);
 
-        if (typeof(userCredentials.uuid) != 'string' || typeof(userCredentials.name) != 'string' || typeof(userCredentials.highscore) != 'number') {
+        if (Object.keys(userCredentials).length === 1 && 'uuid' in userCredentials) {
+            sql = `SELECT * FROM score WHERE uuid = '${userCredentials.uuid}'`
+        }
+
+        if (Object.keys(userCredentials).length > 1) {
+            sql = `INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.highscore}')`
+        }
+
+        if (typeof(userCredentials.uuid) != 'string' || userCredentials.name && typeof(userCredentials.name) != 'string' || userCredentials.highscore && typeof(userCredentials.highscore) != 'number') {
             res.statusCode = 400;
             res.header('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: "Incorrect request body"}))
             return
         }
+
         db.connect(() => {
-            db.query(`INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.highscore}')`, (err, result) => {
+            db.query(sql, (err, result) => {
                 if (err) {
                     console.error(err);
                     throw err;
                 }
+                console.log(sql);
+                console.log(result);
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
