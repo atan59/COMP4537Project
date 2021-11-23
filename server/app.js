@@ -5,9 +5,8 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-
+const PORT = process.env.PORT ||3000;
 const app = express();
-const port = 3000;
 
 // Endpoints
 const getAllEndPoint = '/API/v1/questions';
@@ -41,7 +40,7 @@ const endpointStats = [
     }
 ];
 
-// const port = process.env.PORT || 8888;
+// const PORT = process.env.PORT || 8888;
 const db = mysql.createConnection({
     host: 'comp4537s2.mysql.database.azure.com',
     user: 's2',
@@ -59,6 +58,7 @@ const swaggerOptions = {
                 name: "COMP-4537 [Team S2]"
             },
             servers: ["http://localhost:3000"]
+            // servers: ["https://api4537.azurewebsites.net"]          
         }
     },
     apis: ["app.js"]
@@ -553,7 +553,8 @@ app.post(AllScoresEndPoint, (req, res) => {
 //     })
 // })
 
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
+app.listen(PORT, (err) => {
+    if (err) throw err
+    console.log(`Listening on port ${PORT}`)
 })
 

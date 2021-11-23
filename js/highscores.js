@@ -1,6 +1,8 @@
 // Constants
 const highScoresList = document.querySelector('#highScoresList');
-const url = 'http://localhost:3000/API/v1/scores';
+// const url = 'http://localhost:3000/API/v1/scores';
+const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
+
 
 // Globals
 let highScores = [];

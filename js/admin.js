@@ -1,6 +1,8 @@
 // Constants
-const statsURL = "http://localhost:3000/API/v1/stats";
-const loginURL = "http://localhost:3000/API/v1/login";
+// const statsURL = "http://localhost:3000/API/v1/stats";
+const statsURL = "https://s2api4537.azurewebsites.net/API/v1/stats";
+// const loginURL = "http://localhost:3000/API/v1/login";
+const loginURL = "https://s2api4537.azurewebsites.net/API/v1/login";
 
 // Selectors
 const mainContainer = document.querySelector('.container');

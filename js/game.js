@@ -16,7 +16,8 @@ let score = 0;
 let questionCounter = 0;
 let availableQuestions = [];
 let questions = [];
-let url = "http://localhost:3000/API/v1/questions";
+// let url = "http://localhost:3000/API/v1/questions";
+let url = "https://s2api4537.azurewebsites.net/API/v1/questions";
 let response = null;
 
 startGame = async () => {
