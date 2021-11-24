@@ -1,9 +1,9 @@
 // Constants
 const highScoresList = document.querySelector('#highScoresList');
-const allScoresDiv = document.querySelector('.all');
-const myScoresDiv = document.querySelector('.my');
+const allScoresSelect = document.querySelector('#all');
+const myScoresSelect = document.querySelector('#my');
 const uuid = localStorage.getItem('uuid');
-// const url = 'http://localhost:3000/API/v1/scores';
+const url = 'http://localhost:3000/API/v1/scores';
 // const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
 
 
@@ -54,20 +54,25 @@ const getPersonalScores = async () => {
 }
 
 // Event Listeners
-allScoresBtn.addEventListener('click', getHighScores);
-myScoresBtn.addEventListener('click', getPersonalScores);
-
-Array.from(allScoresDiv.children).forEach(a => {
-    a.addEventListener('click', () => {
-        getFilteredScores(a.innerText)
-    });
+allScoresSelect.addEventListener('change', (event) => {
+    if (event.target.value == 'All Scores') {
+        getHighScores();
+        return;
+    }
+    getFilteredScores(event.target.value);
 })
 
-Array.from(myScoresDiv.children).forEach(a => {
-    a.addEventListener('click', () => {
-        getFilteredPersonalScores(a.innerText);
-    })
+myScoresSelect.addEventListener('focus', () => {
+    myScoresSelect.selectedIndex = -1;
+})
+
+myScoresSelect.addEventListener('change', event => {
+    if (event.target.value == 'My Scores') {
+        getPersonalScores();
+        return;
+    }
+    getFilteredPersonalScores(event.target.value);
 })
 
 // Invocations
-getHighScores();
+// getHighScores();
