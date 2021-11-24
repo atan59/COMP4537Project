@@ -72,3 +72,10 @@ body {
         min-width: 40rem;
     }
 }
+
+pre {
+    font-family: 'Menlo', 'Monaco', monospace !important;
+    box-sizing: border-box !important;
+    padding: 2rem 2.5rem !important;
+    cursor: default !important;
+}
