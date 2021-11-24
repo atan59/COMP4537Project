@@ -63,7 +63,9 @@ allScoresSelect.addEventListener('change', (event) => {
 })
 
 myScoresSelect.addEventListener('focus', () => {
-    myScoresSelect.selectedIndex = -1;
+    myScoresSelect.add(new Option('My Scores', 'Temp Value'));
+    myScoresSelect.lastChild.style.display = 'none';
+    myScoresSelect.selectedIndex = myScoresSelect.options.length - 1;
 })
 
 myScoresSelect.addEventListener('change', event => {
