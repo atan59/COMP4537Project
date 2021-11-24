@@ -17,30 +17,28 @@
         <div id="highScores" class="flex-center flex-column">
             <h1 id="finalScore">Leaderboard</h1>
             <div class="tab flex-center">
-                <div class="dropdown-container">
-                    <div class="dropdown">
-                        <button id="allScoresBtn" class="dropbtn tab-links">All Scores</button>
-                        <div class="dropdown-content all">
-                            <a href="#" id="javascript-btn" class="dropdown-link">JavaScript<i class="fab fa-js"></i></a>
-                            <a href="#" id="html-btn" class="dropdown-link">HTML<i class="fab fa-html5"></i></a>
-                            <a href="#" id="css-btn" class="dropdown-link">CSS<i class="fab fa-css3"></i></a>
-                            <a href="#" id="linux-btn" class="dropdown-link">Linux<i class="fab fa-linux"></i></a>
-                            <a href="#" id="docker-btn" class="dropdown-link">Docker<i class="fab fa-docker"></i></a>
-                            <a href="#" id="python-btn" class="dropdown-link">Python<i class="fab fa-python"></i></a>
-                        </div>
-                    </div>
-                    <div class="dropdown-personal">
-                        <button id="myScoresBtn" class="dropbtn tab-links">My Scores</button>
-                        <div class="dropdown-content my">
-                            <a href="#" id="javascript-btn" class="dropdown-link">JavaScript<i class="fab fa-js"></i></a>
-                            <a href="#" id="html-btn" class="dropdown-link">HTML<i class="fab fa-html5"></i></a>
-                            <a href="#" id="css-btn" class="dropdown-link">CSS<i class="fab fa-css3"></i></a>
-                            <a href="#" id="linux-btn" class="dropdown-link">Linux<i class="fab fa-linux"></i></a>
-                            <a href="#" id="docker-btn" class="dropdown-link">Docker<i class="fab fa-docker"></i></a>
-                            <a href="#" id="python-btn" class="dropdown-link">Python<i class="fab fa-python"></i></a>
-                        </div>
-                    </div>
-                </div>
+                <label class="dropdown all">
+                    <select>
+                        <option>All Scores</option>
+                        <option>JavaScript</option>
+                        <option>HTML</option>
+                        <option>CSS</option>
+                        <option>Linux</option>
+                        <option>Docker</option>
+                        <option>Python</option>
+                    </select>
+                </label>
+                <label class="dropdown my">
+                    <select>
+                        <option>My Scores</option>
+                        <option>JavaScript</option>
+                        <option>HTML</option>
+                        <option>CSS</option>
+                        <option>Linux</option>
+                        <option>Docker</option>
+                        <option>Python</option>
+                    </select>
+                </label>
             </div>
             <ul id="highScoresList"></ul>
             <button class="btn danger" disabled>
