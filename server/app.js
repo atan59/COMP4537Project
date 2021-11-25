@@ -558,7 +558,7 @@ app.post(AllScoresEndPoint, (req, res) => {
 // DO NOT UNCOMMMENT, ALREADY POPULATED DB
 
 // app.get("/", (req, res) => {
-//     fs.readFile('./assets/questions.json', (err, data) => {
+//     fs.readFile('./assets/questionsv2.json', (err, data) => {
 //         if (err) throw err;
 //         const questionArr = JSON.parse(data);
 

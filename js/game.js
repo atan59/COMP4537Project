@@ -1,5 +1,7 @@
 // Selectors
 const question = document.querySelector('#question');
+const choiceContainers = Array.from(document.querySelectorAll('.choice-container'));
+const prefixes = Array.from(document.querySelectorAll('.choice-prefix'));
 const choices = Array.from(document.querySelectorAll('.choice-text'));
 const progressText = document.querySelector('#progressText');
 const scoreText = document.querySelector('#score');
@@ -25,14 +27,12 @@ startGame = async () => {
     score = 0;
 
     if (localStorage.getItem('category')) url += `/?category=${localStorage.getItem('category')}`;
-    
+
     response = await fetch(url);
     if (response.ok) {
         questions = await response.json();
-        console.log(questions);
         questions.sort(() => Math.random() - 0.5);
         questions = questions.slice(0, MAX_QUESTIONS);
-        console.log(questions);
     }
 
     availableQuestions = [...questions];
@@ -52,11 +52,12 @@ getNewQuestion = () => {
 
     const questionIndex = Math.floor(Math.random() * availableQuestions.length);
     currentQuestion = availableQuestions[questionIndex];
-    question.innerText = currentQuestion.question;
+    question.innerHTML = currentQuestion.question;
+
 
     choices.forEach(choice => {
         const number = choice.dataset['number']
-        choice.innerText = currentQuestion['choice' + number];
+        choice.innerHTML = currentQuestion['choice' + number];
     })
 
     availableQuestions.splice(questionIndex, 1);
@@ -81,7 +82,8 @@ choices.forEach(choice => {
         selectedChoice.parentElement.classList.add(classToApply);
 
         setTimeout(() => {
-            selectedChoice.parentElement.classList.remove(classToApply);
+            selectedChoice.parentElement.classList.remove(classToApply)
+
             getNewQuestion();
 
         }, 1000)

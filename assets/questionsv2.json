@@ -1,0 +1,602 @@
+[
+    {
+        "id": 1,
+        "question": "What is the result of <pre class='block'>0.1 + 0.2 === 0.3</pre> in JavaScript?",
+        "choice1": "true",
+        "choice2": "false",
+        "choice3": "undefined",
+        "choice4": "null",
+        "answer": 2,
+        "category": "JavaScript"
+    },
+    {
+        "id": 2,
+        "question": "Which of the following will return false?",
+        "choice1": "<pre class='block'>'' == false</pre>",
+        "choice2": "<pre class='block'>NaN == NaN</pre>",
+        "choice3": "<pre class='block'>false === false</pre>",
+        "choice4": "<pre class='block'>null == undefined</pre>",
+        "answer": 2,
+        "category": "JavaScript"
+    },
+    {
+        "id": 3,
+        "question": "What does <pre class='block'>typeof typeof(null)</pre> return?",
+        "choice1": "Object",
+        "choice2": "undefined",
+        "choice3": "String",
+        "choice4": "None of the above",
+        "answer": 3,
+        "category": "JavaScript"
+    },
+    {
+        "id": 4,
+        "question": "What does <pre class='block'>typeof(() =&gt; undefined)</pre> return?",
+        "choice1": "Object",
+        "choice2": "Function",
+        "choice3": "undefined",
+        "choice4": "null",
+        "answer": 2,
+        "category": "JavaScript"
+    },
+    {
+        "id": 5,
+        "question": "What will <pre class='block'>console.log(!!{})</pre> return in console?",
+        "choice1": "undefined",
+        "choice2": "!!{}",
+        "choice3": "true",
+        "choice4": "false",
+        "answer": 3,
+        "category": "JavaScript"
+    },
+    {
+        "id": 6,
+        "question": "Which of the following will return true?",
+        "choice1": "<pre class='block'>Object.isArray([])</pre>",
+        "choice2": "<pre class='block'>Array.isArray([])</pre>",
+        "choice3": "<pre class='block'>typeof [] === 'array'</pre>",
+        "choice4": "<pre class='block'>isArray([])</pre>",
+        "answer": 2,
+        "category": "JavaScript"
+    },
+    {
+        "id": 7,
+        "question": "How many threads does JavaScript code run in?",
+        "choice1": "8",
+        "choice2": "2",
+        "choice3": "no set number",
+        "choice4": "1",
+        "answer": 4,
+        "category": "JavaScript"
+    },
+    {
+        "id": 8,
+        "question": "How do you create an object in JavaScript that has no prototype?",
+        "choice1": "<pre class='block'>Object.create(undefined)</pre>",
+        "choice2": "<pre class='block'>new Object(undefined)</pre>",
+        "choice3": "<pre class='block'>Object.create(null)</pre>",
+        "choice4": "<pre class='block'>new Object(null)</pre>",
+        "answer": 3,
+        "category": "JavaScript"
+    },
+    {
+        "id": 9,
+        "question": "In JavaScript, which method returns a new array based on the results of running a specified function on each element in the original array?",
+        "choice1": "map",
+        "choice2": "reduce",
+        "choice3": "forEach",
+        "choice4": "transform",
+        "answer": 1,
+        "category": "JavaScript"
+    },
+    {
+        "id": 10,
+        "question": "What is the result of <pre class='block'>100 / 0</pre> in JavaScript",
+        "choice1": "NaN",
+        "choice2": "It throws an error",
+        "choice3": "0",
+        "choice4": "Infinity",
+        "answer": 4,
+        "category": "JavaScript"
+    },
+    {
+        "id": 11,
+        "question": "Which of the following is not a void element in HTML?",
+        "choice1": "br",
+        "choice2": "img",
+        "choice3": "iframe",
+        "choice4": "hr",
+        "answer": 3,
+        "category": "HTML"
+    },
+    {
+        "id": 12,
+        "question": "Which is incorrect regarding global attributes in HTML?",
+        "choice1": "There are only 3 global attributes: id, class, and style",
+        "choice2": "Global attributes can be used with all HTML elements",
+        "choice3": "An HTML element can have the same name for an id and a class",
+        "choice4": "Global attributes do not have broad support across browsers",
+        "answer": 1,
+        "category": "HTML"
+    },
+    {
+        "id": 13,
+        "question": "Which HTML element is used to display a scalar measurement within a range?",
+        "choice1": "<pre class='block'>&lt;range&gt;</pre>",
+        "choice2": "<pre class='block'>&lt;meter&gt;</pre>",
+        "choice3": "<pre class='block'>&lt;gauge&gt;</pre>",
+        "choice4": "<pre class='block'>&lt;measure&gt;</pre>",
+        "answer": 2,
+        "category": "HTML"
+    },
+    {
+        "id": 14,
+        "question": "Text within <pre class='block'>&lt;em&gt; … &lt;/em&gt;</pre> tags is displayed as ________",
+        "choice1": "bold text",
+        "choice2": "indented text",
+        "choice3": "list text",
+        "choice4": "italic text",
+        "answer": 4,
+        "category": "HTML"
+    },
+    {
+        "id": 15,
+        "question": "What is the correct HTML for making a text area?",
+        "choice1": "<pre class='block'>&lt;input type='textbox' /&gt;</pre>",
+        "choice2": "<pre class='block'>&lt;input type='textarea' /&gt;</pre>",
+        "choice3": "<pre class='block'>&lt;textarea&gt;</pre>",
+        "choice4": "<pre class='block'>&lt;textbox&gt;</pre>",
+        "answer": 3,
+        "category": "HTML"
+    },
+    {
+        "id": 16,
+        "question": "How many different heading sizes are there in HTML?",
+        "choice1": "5",
+        "choice2": "3",
+        "choice3": "7",
+        "choice4": "6",
+        "answer": 4,
+        "category": "HTML"
+    },
+    {
+        "id": 17,
+        "question": "Which of the following is NOT true about a script loaded with the defer attribute?",
+        "choice1": "It executes scripts in order",
+        "choice2": "It downloads asynchronously while the DOM is being parsed",
+        "choice3": "It executes after DOMContentLoaded",
+        "choice4": "It can only be used on external scripts",
+        "answer": 3,
+        "category": "HTML"
+    },
+    {
+        "id": 18,
+        "question": "Which of the following is NOT a real tag in HTML?",
+        "choice1": "<pre class='block'>&lt;ins&gt;</pre>",
+        "choice2": "<pre class='block'>&lt;del&gt;</pre>",
+        "choice3": "<pre class='block'>&lt;wbr&gt;</pre>",
+        "choice4": "<pre class='block'>&lt;field&gt;</pre>",
+        "answer": 4,
+        "category": "HTML"
+    },
+    {
+        "id": 19,
+        "question": "Which of the following is false about the canvas tag in HTML",
+        "choice1": "Canvas tags can be used to draw on HTML pages without the use of JavaScript",
+        "choice2": "Canvas tags are transparent and are a container used to draw graphics",
+        "choice3": "Text inside the canvas element will be displayed in browsers if JavaScript is disabled or if that browser does not support canvas ",
+        "choice4": "The only default CSS values of a canvas is its width and height",
+        "answer": 1,
+        "category": "HTML"
+    },
+    {
+        "id": 20,
+        "question": "To get a link to open in a new window or tab, use the ______ attribute value",
+        "choice1": "_blank",
+        "choice2": "_self",
+        "choice3": "_new",
+        "choice4": "_parent",
+        "answer": 1,
+        "category": "HTML"
+    },
+    {
+        "id": 21,
+        "question": "If you apply margin on an inline element, which sides will it apply to?",
+        "choice1": "Only left and right",
+        "choice2": "Only top and bottom",
+        "choice3": "All sides",
+        "choice4": "No sides",
+        "answer": 1,
+        "category": "CSS"
+    },
+    {
+        "id": 22,
+        "question": "Which of these is true about visibility: hidden in CSS?",
+        "choice1": "It occupies space",
+        "choice2": "It is removed from the DOM",
+        "choice3": "It can still be clicked on",
+        "choice4": "It is the same as opacity: 0",
+        "answer": 1,
+        "category": "CSS"
+    },
+    {
+        "id": 23,
+        "question": "In what order are margin and padding defined in CSS?",
+        "choice1": "Right, Bottom, Left, Top",
+        "choice2": "Top, Bottom, Left, Right",
+        "choice3": "Top, Right, Bottom, Left",
+        "choice4": "Left, Right, Top, Bottom",
+        "answer": 3,
+        "category": "CSS"
+    },
+    {
+        "id": 24,
+        "question": "What is the order of the box model from the inside out in CSS?",
+        "choice1": "Content, Padding, Border, Margin",
+        "choice2": "Content, Margin, Border, Padding",
+        "choice3": "Content, Border, Padding, Margin",
+        "choice4": "Padding, Content, Border, Margin",
+        "answer": 1,
+        "category": "CSS"
+    },
+    {
+        "id": 25,
+        "question": "If you want to fill an entire background with an image without distorting the aspect ratio, which value of background-size do you use?",
+        "choice1": "cover",
+        "choice2": "fill",
+        "choice3": "100%",
+        "choice4": "contain",
+        "answer": 1,
+        "category": "CSS"
+    },
+    {
+        "id": 26,
+        "question": "How do you define a custom property in CSS?",
+        "choice1": "$custom-property = 10",
+        "choice2": "$custom-property: 10",
+        "choice3": "--custom-property = 10",
+        "choice4": "--custom-property: 10",
+        "answer": 4,
+        "category": "CSS"
+    },
+    {
+        "id": 27,
+        "question": "Which CSS unit is the largest?",
+        "choice1": "px",
+        "choice2": "mm",
+        "choice3": "pc",
+        "choice4": "Q",
+        "answer": 3,
+        "category": "CSS"
+    },
+    {
+        "id": 28,
+        "question": "How do you access the value of a data-attribute in CSS?",
+        "choice1": "color: data(data-color);",
+        "choice2": "content: data(data-text);",
+        "choice3": "color: attr(data-color);",
+        "choice4": "content: attr(data-text);",
+        "answer": 2,
+        "category": "CSS"
+    },
+    {
+        "id": 29,
+        "question": "Which of the following is not a valid CSS property?",
+        "choice1": "border-image",
+        "choice2": "empty-cells",
+        "choice3": "text-wrap",
+        "choice4": "will-change",
+        "answer": 3,
+        "category": "CSS"
+    },
+    {
+        "id": 30,
+        "question": "Which CSS selector is the most specific?",
+        "choice1": "a#id .red:first-child",
+        "choice2": "#id &gt; .red:not(li)",
+        "choice3": "a.green.bold.wide",
+        "choice4": "#id.small.red",
+        "answer": 1,
+        "category": "CSS"
+    },
+    {
+        "id": 31,
+        "question": "What will happen if you run the command 'init 1' in your terminal",
+        "choice1": "Reboot the system",
+        "choice2": "Shut down the system",
+        "choice3": "Enter single user mode",
+        "choice4": "Start the system without a display manager (GUI)",
+        "answer": 3,
+        "category": "Linux"
+    },
+    {
+        "id": 32,
+        "question": "What does the command 'top' show?",
+        "choice1": "The space usage",
+        "choice2": "The memory usage",
+        "choice3": "The active processes and their corresponding information",
+        "choice4": "Nothing, it's not a command",
+        "answer": 3,
+        "category": "Linux"
+    },
+    {
+        "id": 33,
+        "question": "What is the pipe character in Linux?",
+        "choice1": "|",
+        "choice2": "*",
+        "choice3": "-",
+        "choice4": "&gt;",
+        "answer": 1,
+        "category": "Linux"
+    },
+    {
+        "id": 34,
+        "question": "A low-level utility used for creating/restoring filesystem backup copies in Linux is called:",
+        "choice1": "fsutil",
+        "choice2": "diskpart",
+        "choice3": "dd",
+        "choice4": "format",
+        "answer": 3,
+        "category": "Linux"
+    },
+    {
+        "id": 35,
+        "question": "Which command can be used to count characters in a text file in Linux?",
+        "choice1": "ccount",
+        "choice2": "fsize",
+        "choice3": "count",
+        "choice4": "wc",
+        "answer": 2,
+        "category": "Linux"
+    },
+    {
+        "id": 36,
+        "question": "What happens when you use the 'kill %s' command?",
+        "choice1": "System processes will be stopped",
+        "choice2": "All jobs with command beginning with ‘s’ will be terminated",
+        "choice3": "The last job with 's' will be terminated",
+        "choice4": "The first job with 's' will be terminated",
+        "answer": 2,
+        "category": "Linux"
+    },
+    {
+        "id": 37,
+        "question": "When do we use the GREP command",
+        "choice1": "When we want to search for a string",
+        "choice2": "To find a file",
+        "choice3": "To find a directory",
+        "choice4": "To show all directories which have the string in their name",
+        "answer": 1,
+        "category": "Linux"
+    },
+    {
+        "id": 38,
+        "question": "Choose the correct usage of ‘cd’ to move into the parent directory",
+        "choice1": "cd",
+        "choice2": "cd ..",
+        "choice3": "cd .",
+        "choice4": "cd /",
+        "answer": 2,
+        "category": "Linux"
+    },
+    {
+        "id": 39,
+        "question": "Which command can be used to rename a file/directory?",
+        "choice1": "mv",
+        "choice2": "cp",
+        "choice3": "rename",
+        "choice4": "rm",
+        "answer": 1,
+        "category": "Linux"
+    },
+    {
+        "id": 40,
+        "question": "Which command is used to delete a directory in Linux?",
+        "choice1": "ls",
+        "choice2": "delete",
+        "choice3": "remove",
+        "choice4": "rmdir",
+        "answer": 4,
+        "category": "Linux"
+    },
+    {
+        "id": 41,
+        "question": "How do you list all running Docker containers?",
+        "choice1": "$ -docker ps",
+        "choice2": "$ docker --ps",
+        "choice3": "$ docker ps",
+        "choice4": "$ docker ps -a",
+        "answer": 3,
+        "category": "Docker"
+    },
+    {
+        "id": 42,
+        "question": "What is the hard limit for the number of containers that you can run simultaneously?",
+        "choice1": "2",
+        "choice2": "3",
+        "choice3": "5",
+        "choice4": "There is no hard limit",
+        "answer": 4,
+        "category": "Docker"
+    },
+    {
+        "id": 43,
+        "question": "What is the name of the enterprise-grade cluster management solution from Docker?",
+        "choice1": "Docker Swarm",
+        "choice2": "Docker Hub",
+        "choice3": "Docker Web UI",
+        "choice4": "Docker Universal Control Plane",
+        "answer": 4,
+        "category": "Docker"
+    },
+    {
+        "id": 44,
+        "question": "What is the docker command to show all images?",
+        "choice1": "$ docker images",
+        "choice2": "$ docker imgs",
+        "choice3": "$ docker images - a",
+        "choice4": "$ docker image",
+        "answer": 1,
+        "category": "Docker"
+    },
+    {
+        "id": 45,
+        "question": "What is the docker command to remove all networks, images, and stopped containers?",
+        "choice1": "$ docker prune",
+        "choice2": "$ docker system prune",
+        "choice3": "$ docker kill",
+        "choice4": "$ docker kill --all",
+        "answer": 2,
+        "category": "Docker"
+    },
+    {
+        "id": 46,
+        "question": "Docker registry defaults to listening on which port?",
+        "choice1": "3000",
+        "choice2": "5000",
+        "choice3": "8000",
+        "choice4": "1433",
+        "answer": 2,
+        "category": "Docker"
+    },
+    {
+        "id": 47,
+        "question": "How many private repositories are allowed for an individual on Docker Hub",
+        "choice1": "1",
+        "choice2": "2",
+        "choice3": "4",
+        "choice4": "There is no set amount",
+        "answer": 1,
+        "category": "Docker"
+    },
+    {
+        "id": 48,
+        "question": "Which text document contains all the commands a user could call on the command line to assemble an image?",
+        "choice1": "Docker Cloud",
+        "choice2": "Dockerfile",
+        "choice3": "Docker Compose",
+        "choice4": "Docker Kitematic",
+        "answer": 2,
+        "category": "Docker"
+    },
+    {
+        "id": 49,
+        "question": "A docker registry is a place to store and distribute Docker ______",
+        "choice1": "Files",
+        "choice2": "Containers",
+        "choice3": "Images",
+        "choice4": "All of the Above",
+        "answer": 3,
+        "category": "Docker"
+    },
+    {
+        "id": 50,
+        "question": "What is the markup language used to write Docker configuration files?",
+        "choice1": "JSON",
+        "choice2": "YAML",
+        "choice3": "XML",
+        "choice4": "HTML",
+        "answer": 2,
+        "category": "Docker"
+    },
+    {
+        "id": 51,
+        "question": "Which function converts an integer, x, to a unicode character in Python?",
+        "choice1": "<pre class='block'>unichr(x)</pre>",
+        "choice2": "<pre class='block'>ord(x)</pre>",
+        "choice3": "<pre class='block'>uni(x)</pre>",
+        "choice4": "<pre class='block'>oct(x)</pre>",
+        "answer": 4,
+        "category": "Python"
+    },
+    {
+        "id": 52,
+        "question": "All keywords in Python are",
+        "choice1": "Uppercase",
+        "choice2": "Lowercase",
+        "choice3": "Capitalized",
+        "choice4": "None of the above",
+        "answer": 4,
+        "category": "Python"
+    },
+    {
+        "id": 53,
+        "question": "Which of the following is NOT a keyword in Python?",
+        "choice1": "pass",
+        "choice2": "assert",
+        "choice3": "nonlocal",
+        "choice4": "eval",
+        "answer": 4,
+        "category": "Python"
+    },
+    {
+        "id": 54,
+        "question": "How many Binary Data Types exist in Python?",
+        "choice1": "1",
+        "choice2": "2",
+        "choice3": "3",
+        "choice4": "None",
+        "answer": 3,
+        "category": "Python"
+    },
+    {
+        "id": 55,
+        "question": "What will be the value of the following Python expression: <pre class='block'>4 + 3 % 5</pre>",
+        "choice1": "7",
+        "choice2": "2",
+        "choice3": "4",
+        "choice4": "1",
+        "answer": 1,
+        "category": "Python"
+    },
+    {
+        "id": 56,
+        "question": "Which of the following is the truncation division operator in Python?",
+        "choice1": "|",
+        "choice2": "/",
+        "choice3": "//",
+        "choice4": "%",
+        "answer": 3,
+        "category": "Python"
+    },
+    {
+        "id": 57,
+        "question": "What is the maximum possible length of an identifier in Python?",
+        "choice1": "31 characters",
+        "choice2": "128 characters",
+        "choice3": "63 characters",
+        "choice4": "None of the above",
+        "answer": 4,
+        "category": "Python"
+    },
+    {
+        "id": 58,
+        "question": "Which of the following declarations is incorrect?",
+        "choice1": "<pre class='block'>_x = 2</pre>",
+        "choice2": "<pre class='block'>__x = 3</pre>",
+        "choice3": "<pre class='block'>__xyz__ = 5</pre>",
+        "choice4": "None of the above",
+        "answer": 4,
+        "category": "Python"
+    },
+    {
+        "id": 59,
+        "question": "Which of the following keywords is used in Python for file streaming",
+        "choice1": "try",
+        "choice2": "with",
+        "choice3": "import",
+        "choice4": "from",
+        "answer": 2,
+        "category": "Python"
+    },
+    {
+        "id": 60,
+        "question": "What if statement is used in Python to only run code if a file was run directly?",
+        "choice1": "<pre class='block'>if __name__ == '__main__'</pre>",
+        "choice2": "<pre class='block'>if _name_ == '_main_'</pre>",
+        "choice3": "<pre class='block'>if __name__ == 'main'</pre>",
+        "choice4": "None of the above",
+        "answer": 1,
+        "category": "Python"
+    }
+]
