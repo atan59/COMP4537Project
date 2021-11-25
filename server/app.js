@@ -5,7 +5,7 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const PORT = process.env.PORT ||3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Endpoints
@@ -15,6 +15,8 @@ const getStatsEndPoint = '/API/v1/stats';
 const loginEndPoint = '/API/v1/login';
 const AllScoresEndPoint = '/API/v1/scores';
 const getScoresByUUIDEndPoint = '/API/v1/scores/:uuid';
+const getScoresByCategoryEndPoint = '/API/v1/scores/categories/:category';
+const getScoresByUUIDAndCategoryEndPoint = '/API/v1/scores/:uuid/:category';
 
 // Globals
 const endpointStats = [
@@ -46,6 +48,16 @@ const endpointStats = [
     {
         method: 'DELETE',
         endpoint: getScoresByUUIDEndPoint.replace(':', ''),
+        requests: 0
+    },
+    {
+        method: 'GET',
+        endpoint: getScoresByCategoryEndPoint.replace(':', ''),
+        requests: 0
+    },
+    {
+        method: 'GET',
+        endpoint: getScoresByUUIDAndCategoryEndPoint.replace(':', '').replace(':', ''),
         requests: 0
     }
 ];
@@ -231,7 +243,7 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
     if (isNaN(req.params.id)) {
         res.statusCode = 400;
         res.header('Content-Type', 'application/json');
-        res.end(JSON.stringify({ error: "Incorrect request body"}))
+        res.end(JSON.stringify({ error: "Incorrect request body" }))
         return
     }
     db.connect(() => {
@@ -356,10 +368,10 @@ app.post(loginEndPoint, (req, res) => {
 
     req.on('end', () => {
         const loginCredentials = JSON.parse(body);
-        if (typeof(loginCredentials.username) != 'string' && typeof(loginCredentials.password) != 'string') {
+        if (typeof (loginCredentials.username) != 'string' && typeof (loginCredentials.password) != 'string') {
             res.statusCode = 400;
             res.header('Content-Type', 'application/json');
-            res.end(JSON.stringify({ error: "Incorrect request body"}))
+            res.end(JSON.stringify({ error: "Incorrect request body" }))
             return
         }
         db.connect(() => {
@@ -484,6 +496,113 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
 
 /**
  * @swagger
+ * /API/v1/scores/categories/{category}:
+ *  get:
+ *      description: Used to get all scores for a given category.
+ *      parameters:
+ *          - name: category
+ *            in: path
+ *            required: true
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ *                  This request will return an array of all the highscores pertaining to a specific category.
+ *                  Each object in the array will have an id, a user id, a user's name, the user's highscore, and the category for the score.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 2
+ *                                  uuid:
+ *                                      type: string
+ *                                      example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
+ *                                  name:
+ *                                      type: string
+ *                                      example: Alkarim
+ *                                  highscore:
+ *                                      type: integer
+ *                                      example: 200
+ *                                  category:
+ *                                      type: string
+ *                                      example: JavaScript
+ */
+app.get(getScoresByCategoryEndPoint, (req, res) => {
+    db.connect(() => {
+        db.query(`SELECT * FROM score WHERE category = '${req.params.category}'`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
+            res.end(JSON.stringify(result));
+        })
+    })
+})
+
+/**
+ * @swagger
+ * /API/v1/scores/{uuid}/categories/{category}:
+ *  get:
+ *      description: Used to get all scores for a user with a given uuid and category.
+ *      parameters:
+ *          - name: uuid
+ *            in: path
+ *            required: true
+ *          - name: category
+ *            in: path
+ *            required: true
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ *                  This request will return an array of all the highscores pertaining to a specific uuid (user) with a specific category.
+ *                  Each object in the array will have an id, a user id, a user's name, the user's highscore, and the category for the score.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 2
+ *                                  uuid:
+ *                                      type: string
+ *                                      example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
+ *                                  name:
+ *                                      type: string
+ *                                      example: Alkarim
+ *                                  highscore:
+ *                                      type: integer
+ *                                      example: 200
+ *                                  category:
+ *                                      type: string
+ *                                      example: JavaScript
+ */
+app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
+    db.connect(() => {
+        db.query(`SELECT * FROM score WHERE uuid = '${req.params.uuid}' AND category = '${req.params.category}'`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
+            res.end(JSON.stringify(result));
+        })
+    })
+})
+
+/**
+ * @swagger
  * /API/v1/scores/{uuid}:
  *  delete:
  *      description: Used to delete all scores for a user with a given UUID.
@@ -517,12 +636,12 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
  *                                  description: error message
  *                                  example: Incorrect request body
  */
- app.delete(getScoresByUUIDEndPoint, (req, res) => {
+app.delete(getScoresByUUIDEndPoint, (req, res) => {
 
-    if (req.params.uuid && typeof(req.params.uuid) != 'string') {
+    if (req.params.uuid && typeof (req.params.uuid) != 'string') {
         res.statusCode = 400;
         res.header('Content-Type', 'application/json');
-        res.end(JSON.stringify({ error: "Incorrect request body"}))
+        res.end(JSON.stringify({ error: "Incorrect request body" }))
         return
     }
 
@@ -638,20 +757,19 @@ app.post(AllScoresEndPoint, (req, res) => {
 
     req.on('end', () => {
         const userCredentials = JSON.parse(body);
-        console.log(userCredentials);
 
         if (Object.keys(userCredentials).length === 1 && 'uuid' in userCredentials) {
             sql = `SELECT * FROM score WHERE uuid = '${userCredentials.uuid}'`
         }
 
         if (Object.keys(userCredentials).length > 1) {
-            sql = `INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.highscore}')`
+            sql = `INSERT INTO score (uuid, name, highscore, category) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.highscore}', '${userCredentials.category}')`
         }
 
-        if (typeof(userCredentials.uuid) != 'string' || userCredentials.name && typeof(userCredentials.name) != 'string') {
+        if (typeof (userCredentials.uuid) != 'string' || userCredentials.name && typeof (userCredentials.name) != 'string') {
             res.statusCode = 400;
             res.header('Content-Type', 'application/json');
-            res.end(JSON.stringify({ error: "Incorrect request body"}))
+            res.end(JSON.stringify({ error: "Incorrect request body" }))
             return
         }
 
@@ -661,8 +779,6 @@ app.post(AllScoresEndPoint, (req, res) => {
                     console.error(err);
                     throw err;
                 }
-                console.log(sql);
-                console.log(result);
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);

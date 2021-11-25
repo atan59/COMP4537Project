@@ -26,13 +26,29 @@ const getHighScores = async () => {
 }
 
 const getFilteredScores = async category => {
-    // Implement Server API
-    console.log(category);
+    highScoresList.innerHTML = '';
+
+    response = await fetch(`${url}categories/${category}`);
+    if (response.ok) {
+        highScores = await response.json();
+
+        highScoresList.innerHTML = highScores.map(score => {
+            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+        }).join('');
+    }
 }
 
 const getFilteredPersonalScores = async category => {
-    // Implement Server API
-    console.log(category);
+    highScoresList.innerHTML = '';
+
+    response = await fetch(`${url}${uuid}/${category}`);
+    if (response.ok) {
+        highScores = await response.json();
+
+        highScoresList.innerHTML = highScores.map(score => {
+            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+        }).join('');
+    }
 }
 
 const getPersonalScores = async () => {
@@ -53,7 +69,6 @@ const deletePersonalScores = async () => {
     response = await fetch(url + uuid, {
         method: 'DELETE'
     });
-    console.log(response);
     if (response.ok) {
         window.location.reload();
     }
@@ -78,7 +93,7 @@ scoresSelect.addEventListener('change', (event) => {
 
 categoriesSelect.addEventListener('change', event => {
     currentCategory = event.target.value;
-    
+
     if (currentScores == 'My Scores' && !event.target.value) {
         getPersonalScores();
         return;

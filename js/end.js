@@ -4,6 +4,7 @@ const saveScoreBtn = document.querySelector('#saveScoreBtn');
 const finalScore = document.querySelector('#finalScore');
 const mostRecentScore = localStorage.getItem('mostRecentScore');
 const uuid = localStorage.getItem('uuid');
+const mostRecentCategory = localStorage.getItem('category');
 const postScoresURL = 'http://localhost:3000/API/v1/scores';
 // const postScoresURL = "https://s2api4537.azurewebsites.net/API/v1/scores";
 
@@ -28,7 +29,8 @@ saveHighScore = async e => {
     const data = {
         uuid: uuid,
         name: username.value,
-        highscore: mostRecentScore
+        highscore: mostRecentScore,
+        category: mostRecentCategory
     }
 
     response = await fetch(postScoresURL, {
