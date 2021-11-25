@@ -42,6 +42,11 @@ const endpointStats = [
         method: 'POST',
         endpoint: AllScoresEndPoint,
         requests: 0
+    },
+    {
+        method: 'DELETE',
+        endpoint: getScoresByUUIDEndPoint.replace(':', ''),
+        requests: 0
     }
 ];
 
@@ -430,9 +435,13 @@ app.get(AllScoresEndPoint, (req, res) => {
 
 /**
  * @swagger
- * /API/v1/scores/:uuid:
+ * /API/v1/scores/{uuid}:
  *  get:
  *      description: Used to get all scores for a user with a given UUID.
+ *      parameters:
+ *          - name: uuid
+ *            in: path
+ *            required: true
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
@@ -467,8 +476,66 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
             }
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
+            endpointStats.find(obj => obj.method === "GET" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
+        })
+    })
+})
+
+/**
+ * @swagger
+ * /API/v1/scores/{uuid}:
+ *  delete:
+ *      description: Used to delete all scores for a user with a given UUID.
+ *      parameters:
+ *          - name: uuid
+ *            in: path
+ *            required: true
+ *      responses:
+ *          "200":
+ *              description: Successfully made the DELETE request.
+ *                  This request deletes all of the highscores pertaining to a specific uuid (user) and returns the number of affected rows.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              affectedRows:
+ *                                  type: integer
+ *                                  example: 3
+ *          "400":
+ *              description: Unable to make the POST request because of an incorrect request body.
+ *                  This could be because of either a missing uuid, name, or highscore field in the request body.
+ *                  The error could also be caused by having extra fields in the request body.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Incorrect request body
+ */
+ app.delete(getScoresByUUIDEndPoint, (req, res) => {
+
+    if (req.params.uuid && typeof(req.params.uuid) != 'string') {
+        res.statusCode = 400;
+        res.header('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: "Incorrect request body"}))
+        return
+    }
+
+    db.connect(() => {
+        db.query(`DELETE FROM score WHERE uuid = '${req.params.uuid}'`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
+            res.end(JSON.stringify({ affectedRows: result.affectedRows }));
         })
     })
 })
