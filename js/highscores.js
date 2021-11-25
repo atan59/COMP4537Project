@@ -1,7 +1,7 @@
 // Constants
 const highScoresList = document.querySelector('#highScoresList');
-const allScoresSelect = document.querySelector('#all');
-const myScoresSelect = document.querySelector('#my');
+const scoresSelect = document.querySelector('#all-my');
+const categoriesSelect = document.querySelector('#categories');
 const uuid = localStorage.getItem('uuid');
 const url = 'http://localhost:3000/API/v1/scores/';
 // const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
@@ -10,11 +10,12 @@ const url = 'http://localhost:3000/API/v1/scores/';
 // Globals
 let highScores = [];
 let response = null;
+let currentScores = scoresSelect.value;
+let currentCategory = categoriesSelect.value;
 
 const getHighScores = async () => {
     response = await fetch(url);
     if (response.ok) {
-        allScoresSelect.focus();
         highScores = await response.json();
 
         highScoresList.innerHTML = highScores.map(score => {
@@ -36,7 +37,6 @@ const getFilteredPersonalScores = async category => {
 const getPersonalScores = async () => {
     response = await fetch(url + uuid)
     if (response.ok) {
-        myScoresSelect.focus();
         highScores = await response.json();
 
         highScoresList.innerHTML = highScores.map(score => {
@@ -46,26 +46,36 @@ const getPersonalScores = async () => {
 }
 
 // Event Listeners
-allScoresSelect.addEventListener('change', (event) => {
-    if (event.target.value == 'All Scores') {
+scoresSelect.addEventListener('change', (event) => {
+    currentScores = event.target.value;
+
+    if (event.target.value == 'All Scores' && !currentCategory) {
         getHighScores();
         return;
     }
-    getFilteredScores(event.target.value);
-})
 
-myScoresSelect.addEventListener('focus', () => {
-    myScoresSelect.add(new Option('My Scores', 'Temp Value'));
-    myScoresSelect.lastChild.style.display = 'none';
-    myScoresSelect.selectedIndex = myScoresSelect.options.length - 1;
-})
-
-myScoresSelect.addEventListener('change', event => {
-    if (event.target.value == 'My Scores') {
+    if (event.target.value == 'My Scores' && !currentCategory) {
         getPersonalScores();
         return;
     }
-    getFilteredPersonalScores(event.target.value);
+    if (event.target.value == 'All Scores') getFilteredScores(currentCategory);
+    if (event.target.value == 'My Scores') getFilteredPersonalScores(currentCategory);
+})
+
+categoriesSelect.addEventListener('change', event => {
+    currentCategory = event.target.value;
+    
+    if (currentScores == 'My Scores' && !event.target.value) {
+        getPersonalScores();
+        return;
+    }
+
+    if (currentScores == 'All Scores' && !event.target.value) {
+        getHighScores();
+        return;
+    }
+    if (currentScores == 'My Scores') getFilteredPersonalScores(event.target.value);
+    if (currentScores == 'All Scores') getFilteredScores(event.target.value);
 })
 
 // Invocations

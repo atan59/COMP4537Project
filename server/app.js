@@ -428,6 +428,36 @@ app.get(AllScoresEndPoint, (req, res) => {
     })
 })
 
+/**
+ * @swagger
+ * /API/v1/scores/:uuid:
+ *  get:
+ *      description: Used to get all scores for a user with a given UUID.
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ *                  This request will return an array of all the highscores pertaining to a specific uuid (user).
+ *                  Each object in the array will have an id, a user id, the user's name, and the user's highscore.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  id:
+ *                                      type: integer
+ *                                      example: 2
+ *                                  uuid:
+ *                                      type: string
+ *                                      example: 560a559e-7c20-4e6a-9d43-80e0ec3a4f59
+ *                                  name:
+ *                                      type: string
+ *                                      example: Alkarim
+ *                                  highscore:
+ *                                      type: integer
+ *                                      example: 200
+ */
 app.get(getScoresByUUIDEndPoint, (req, res) => {
     db.connect(() => {
         db.query(`SELECT * FROM score WHERE uuid = '${req.params.uuid}'`, (err, result) => {
@@ -551,7 +581,7 @@ app.post(AllScoresEndPoint, (req, res) => {
             sql = `INSERT INTO score (uuid, name, highscore) VALUES ('${userCredentials.uuid}', '${userCredentials.name}', '${userCredentials.highscore}')`
         }
 
-        if (typeof(userCredentials.uuid) != 'string' || userCredentials.name && typeof(userCredentials.name) != 'string' || userCredentials.highscore && typeof(userCredentials.highscore) != 'number') {
+        if (typeof(userCredentials.uuid) != 'string' || userCredentials.name && typeof(userCredentials.name) != 'string') {
             res.statusCode = 400;
             res.header('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: "Incorrect request body"}))
