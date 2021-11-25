@@ -14,7 +14,7 @@ const getQuestionByIDEndPoint = '/API/v1/questions/:id'
 const getStatsEndPoint = '/API/v1/stats';
 const loginEndPoint = '/API/v1/login';
 const AllScoresEndPoint = '/API/v1/scores';
-const getScoresByIDEndPoint = '';
+const getScoresByUUIDEndPoint = '/API/v1/scores/:uuid';
 
 // Globals
 const endpointStats = [
@@ -31,6 +31,11 @@ const endpointStats = [
     {
         method: 'GET',
         endpoint: AllScoresEndPoint,
+        requests: 0
+    },
+    {
+        method: 'GET',
+        endpoint: getScoresByUUIDEndPoint.replace(':', ''),
         requests: 0
     },
     {
@@ -418,6 +423,21 @@ app.get(AllScoresEndPoint, (req, res) => {
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
             endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
+            res.end(JSON.stringify(result));
+        })
+    })
+})
+
+app.get(getScoresByUUIDEndPoint, (req, res) => {
+    db.connect(() => {
+        db.query(`SELECT * FROM score WHERE uuid = '${req.params.uuid}'`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
         })
     })

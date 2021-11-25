@@ -3,7 +3,7 @@ const highScoresList = document.querySelector('#highScoresList');
 const allScoresSelect = document.querySelector('#all');
 const myScoresSelect = document.querySelector('#my');
 const uuid = localStorage.getItem('uuid');
-const url = 'http://localhost:3000/API/v1/scores';
+const url = 'http://localhost:3000/API/v1/scores/';
 // const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
 
 
@@ -14,7 +14,7 @@ let response = null;
 const getHighScores = async () => {
     response = await fetch(url);
     if (response.ok) {
-        allScoresBtn.focus();
+        allScoresSelect.focus();
         highScores = await response.json();
 
         highScoresList.innerHTML = highScores.map(score => {
@@ -34,17 +34,9 @@ const getFilteredPersonalScores = async category => {
 }
 
 const getPersonalScores = async () => {
-    const data = { uuid: uuid }
-
-    response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-
+    response = await fetch(url + uuid)
     if (response.ok) {
+        myScoresSelect.focus();
         highScores = await response.json();
 
         highScoresList.innerHTML = highScores.map(score => {
@@ -77,4 +69,4 @@ myScoresSelect.addEventListener('change', event => {
 })
 
 // Invocations
-// getHighScores();
+getHighScores();
