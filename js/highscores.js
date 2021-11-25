@@ -2,6 +2,7 @@
 const highScoresList = document.querySelector('#highScoresList');
 const scoresSelect = document.querySelector('#all-my');
 const categoriesSelect = document.querySelector('#categories');
+const clearHighScoresBtn = document.getElementById('clearHighScoresBtn');
 const uuid = localStorage.getItem('uuid');
 const url = 'http://localhost:3000/API/v1/scores/';
 // const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
@@ -44,6 +45,19 @@ const getPersonalScores = async () => {
         }).join('');
     }
 }
+// TODO
+// maybe do a modal to ask if they're sure that they want to clear the scores
+// TODO2
+// maybe clear by category
+const deletePersonalScores = async () => {
+    response = await fetch(url + uuid, {
+        method: 'DELETE'
+    });
+    console.log(response);
+    if (response.ok) {
+        window.location.reload();
+    }
+}
 
 // Event Listeners
 scoresSelect.addEventListener('change', (event) => {
@@ -77,6 +91,8 @@ categoriesSelect.addEventListener('change', event => {
     if (currentScores == 'My Scores') getFilteredPersonalScores(event.target.value);
     if (currentScores == 'All Scores') getFilteredScores(event.target.value);
 })
+
+clearHighScoresBtn.addEventListener('click', deletePersonalScores);
 
 // Invocations
 getHighScores();
