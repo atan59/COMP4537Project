@@ -30,7 +30,6 @@ app.use(cors(corsOptions));
 
 // Endpoints
 const getAllEndPoint = '/API/v1/questions';
-const getQuestionByIDEndPoint = '/API/v1/questions/:id'
 const getStatsEndPoint = '/API/v1/stats';
 const loginEndPoint = '/API/v1/login';
 const AllScoresEndPoint = '/API/v1/scores';
@@ -47,11 +46,6 @@ const endpointStats = [
         endpoint: getAllEndPoint,
         requests: 0
     },
-    // {
-    //     method: 'GET',
-    //     endpoint: getQuestionByIDEndPoint.replace(':', ''),
-    //     requests: 0
-    // },
     {
         method: 'GET',
         endpoint: AllScoresEndPoint,
@@ -203,86 +197,6 @@ app.get(getAllEndPoint, (req, res) => {
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
             endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
-            res.end(JSON.stringify(result));
-        })
-    })
-})
-
-// Get request (by ID)
-/**
- * @swagger
- * /API/v1/questions/{id}:
- *  get:
- *      description: Used to get a question by its id.
- *      parameters:
- *          - name: id
- *            in: path
- *            required: true
- *      responses:
- *          "200":
- *              description: Successfully made the GET request.
- *                  The request will return the question object with the specified id.
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: array
- *                          items:
- *                              type: object
- *                              properties:
- *                                  id:
- *                                      type: integer
- *                                      example: 1
- *                                  question:
- *                                      type: string
- *                                      example: What is the result of 0.1 + 0.2 === 0.3 in JavaScript?
- *                                  choice1:
- *                                      type: string
- *                                      example: 'true'
- *                                  choice2:
- *                                      type: string
- *                                      example: 'false'
- *                                  choice3:
- *                                      type: string
- *                                      example: undefined
- *                                  choice4:
- *                                      type: string
- *                                      example: 'null'
- *                                  category:
- *                                      type: string
- *                                      example: JavaScript
- *                                  answer:
- *                                      type: integer
- *                                      example: 2
- *          "400":
- *              description: Unable to make the GET request.
- *                  The id that has been passed does not match the format we have defined.
- *                  The id should be an integer (ex. 1, 2, 14, etc.).
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              error:
- *                                  type: string
- *                                  description: error message
- *                                  example: Incorrect request body
- */
-app.get(getQuestionByIDEndPoint, (req, res) => {
-    if (isNaN(req.params.id)) {
-        res.statusCode = 400;
-        res.header('Content-Type', 'application/json');
-        res.end(JSON.stringify({ error: "Incorrect request body" }))
-        return
-    }
-    db.connect(() => {
-        db.query(`SELECT * FROM question WHERE id = ${req.params.id}`, (err, result) => {
-            if (err) {
-                console.error(err);
-                throw err;
-            }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.endpoint === getQuestionByIDEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
         })
     })
