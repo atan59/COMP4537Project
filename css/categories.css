@@ -4,9 +4,18 @@
 .fa-linux,
 .fa-docker,
 .fa-python,
-.fa-blender {
+.fa-blender,
+.fa-arrow-circle-left {
     font-size: 3rem;
     margin-left: 1rem;
+}
+
+#go-back-btn {
+    background: linear-gradient(90deg, rgb(245, 111, 66) 0%, rgb(245, 120, 66) 100%);
+}
+
+#go-back-btn:hover {
+    box-shadow: 0 0.4rem 1.4rem 0 rgba(245, 100, 60, 0.6);
 }
 
 /* #javascript-btn,

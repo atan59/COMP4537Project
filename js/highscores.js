@@ -24,28 +24,49 @@ let notyf = new Notyf({
 // Helper functions
 const nameValidate = (name) => !(name === '')
 
-const lettersOnly = (event, scoreID) => {
-    const charCode = event.keyCode;
-    const newName = event.target.innerText;
+const checkValidUpdate = (originalValue, newValue, scoreID) => {
+    if (originalValue !== newValue) updateName(scoreID, newValue);
+}
 
-    if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) return true;
+const handleEnter = (originalName, newName, scoreID) => {
+    if (!nameValidate(newName)) {
+        notyf.error('Your name cannot be empty!')
+        return false
+    }
+    checkValidUpdate(originalName, newName, scoreID)
+}
 
-    if (charCode == 13) {
-        if (!nameValidate(newName)) {
-            notyf.error('Your name cannot be empty!')
-            return false
-        }
-        updateName(scoreID, newName);
-        return false;
-    } else {
-        return false;
+const sortHighScores = (i, j) => j.highscore - i.highscore
+
+const handlePaste = (event) => {
+    console.log('hi');
+    event.preventDefault();
+    return false;
+}
+
+const handleFocus = (event) => {
+    if (event.target.onpaste === null) {
+        event.target.onpaste = (event) => handlePaste(event);
     }
 }
 
-const sortHighScores = (i, j) => {
-    return j.highscore - i.highscore
+const handleKeyPress = (event, scoreID) => {
+    const charCode = event.keyCode;
+    const defaultValue = event.target.getAttribute('data-default');
+    console.log(event);
+
+    if (event.target.onblur === null) {
+        event.target.onblur = (event) => checkValidUpdate(defaultValue, event.target.innerText, scoreID);
+    }
+
+    if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) return true;
+
+    if (charCode == 13) handleEnter(defaultValue, event.target.innerText, scoreID);
+
+    return false;
 }
 
+// Main Functions
 const updateName = async (id, name) => {
     response = await fetch(url + id, {
         method: 'PUT',
@@ -54,12 +75,12 @@ const updateName = async (id, name) => {
         },
         body: JSON.stringify({ name: name })
     });
-    
+
     if (response.ok) {
         window.location.reload();
         return;
     }
-    
+
     notyf.error('Sorry, there was a problem. Try again later!')
 }
 
@@ -109,7 +130,17 @@ const getPersonalScores = async () => {
         highScores.sort((i, j) => sortHighScores(i, j));
 
         highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score"><span contenteditable='true' onkeypress='return lettersOnly(event, ${score.id})'>${score.name}</span> - ${score.highscore}</li>`
+            return `<li class="high-score">
+                        <span onfocus='return handleFocus(event)' 
+                              contenteditable='true' 
+                              data-default='${score.name}'
+                              onkeypress='return handleKeyPress(event, ${score.id})'
+                              ondragenter='return false'
+                              ondragleave='return false'
+                              ondragover='return false' 
+                              ondrop='return false'>
+                              ${score.name}</span> - ${score.highscore}
+                    </li>`
         }).join('');
     }
 }
@@ -131,11 +162,13 @@ scoresSelect.addEventListener('change', (event) => {
     currentScores = event.target.value;
 
     if (event.target.value == 'All Scores' && !currentCategory) {
+        clearHighScoresBtn.disabled = true;
         getHighScores();
         return;
     }
 
     if (event.target.value == 'My Scores' && !currentCategory) {
+        clearHighScoresBtn.disabled = false;
         getPersonalScores();
         return;
     }

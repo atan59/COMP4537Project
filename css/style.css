@@ -89,7 +89,15 @@ h2 {
     box-shadow: 0 0.4rem 1.4rem 0 rgba(255, 255, 0, 0.5);
 }
 
-.fa-crown {
+#admin-btn {
+    background: linear-gradient(90deg, rgb(3, 252, 82) 0%, rgb(3, 252, 128) 100%);
+}
+
+#admin-btn:hover {
+    box-shadow: 0 0.4rem 1.4rem 0 rgba(3, 255, 0, 0.5);
+}
+
+.fa-crown, .fa-user, .fa-gamepad {
     font-size: 2.5rem;
     margin-left: 1rem;
 }

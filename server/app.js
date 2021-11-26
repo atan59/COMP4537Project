@@ -730,6 +730,7 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
             }).then(result => {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             }).catch(err => console.log(err));
     })
