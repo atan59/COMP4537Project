@@ -25,15 +25,11 @@ let notyf = new Notyf({
 const nameValidate = (name) => !(name === '')
 
 const checkValidUpdate = (originalValue, newValue, scoreID) => {
-    if (originalValue !== newValue) updateName(scoreID, newValue);
-}
-
-const handleEnter = (originalName, newName, scoreID) => {
-    if (!nameValidate(newName)) {
+    if (!nameValidate(newValue)) {
         notyf.error('Your name cannot be empty!')
         return false
     }
-    checkValidUpdate(originalName, newName, scoreID)
+    if (originalValue !== newValue) updateName(scoreID, newValue);
 }
 
 const sortHighScores = (i, j) => j.highscore - i.highscore
@@ -61,7 +57,7 @@ const handleKeyPress = (event, scoreID) => {
 
     if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) return true;
 
-    if (charCode == 13) handleEnter(defaultValue, event.target.innerText, scoreID);
+    if (charCode == 13) checkValidUpdate(defaultValue, event.target.innerText, scoreID);
 
     return false;
 }
