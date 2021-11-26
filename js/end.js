@@ -20,7 +20,7 @@ console.log(uuid);
 finalScore.innerText = mostRecentScore;
 
 username.addEventListener('keyup', () => {
-    saveScoreBtn.disabled = !username.value;
+    saveScoreBtn.disabled = !username.value.trim();
 });
 
 saveHighScore = async e => {
