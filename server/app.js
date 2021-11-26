@@ -53,7 +53,7 @@ const endpointStats = [
     },
     {
         method: 'GET',
-        endpoint: getScoresByUUIDEndPoint.replace(':', ''),
+        endpoint: getScoresByUUIDEndPoint,
         requests: 0
     },
     {
@@ -63,22 +63,22 @@ const endpointStats = [
     },
     {
         method: 'DELETE',
-        endpoint: getScoresByUUIDEndPoint.replace(':', ''),
+        endpoint: getScoresByUUIDEndPoint,
         requests: 0
     },
     {
         method: 'GET',
-        endpoint: getScoresByCategoryEndPoint.replace(':', ''),
+        endpoint: getScoresByCategoryEndPoint,
         requests: 0
     },
     {
         method: 'GET',
-        endpoint: getScoresByUUIDAndCategoryEndPoint.replace(':', '').replace(':', ''),
+        endpoint: getScoresByUUIDAndCategoryEndPoint,
         requests: 0
     },
     {
         method: 'PUT',
-        endpoint: updateScoreByIDEndPoint.replace(':', ''),
+        endpoint: updateScoreByIDEndPoint,
         requests: 0
     }
 ];
@@ -234,12 +234,14 @@ app.get(getStatsEndPoint, (req, res) => {
     if (req.headers['set-cookie'] == accessToken) {
         res.statusCode = 200;
         res.header('Content-Type', 'application/json');
-        res.end(JSON.stringify(endpointStats));
+        const adminStats = endpointStats.map(obj => {
+            return { ...obj, endpoint: obj.endpoint.replace(/:/g, '') }
+        });
+        res.end(JSON.stringify(adminStats));
     } else {
         res.send("not authenticated, invalid token");
         res.end();
     }
-
 })
 
 /**
@@ -443,7 +445,14 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
             }
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.method === "GET" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
+            endpointStats.find(obj => {
+                console.log(obj);
+                if (obj.method === "GET" && obj.endpoint === getScoresByUUIDEndPoint) {
+                    console.log('hi');
+                    console.log(obj);
+                    obj.requests++;
+                }
+            })
             res.end(JSON.stringify(result));
         })
     })
