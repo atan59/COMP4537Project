@@ -151,8 +151,12 @@ const getPersonalScores = async () => {
 // maybe do a modal to ask if they're sure that they want to clear the scores
 // TODO2
 // maybe clear by category
-const deletePersonalScores = async () => {
-    response = await fetch(url + uuid, {
+const deletePersonalScores = async (category) => {
+    let requestURL = url + uuid;
+
+    if (category) requestURL += `/${category}`
+
+    response = await fetch(requestURL, {
         method: 'DELETE'
     });
     if (response.ok) {
@@ -164,14 +168,15 @@ const deletePersonalScores = async () => {
 scoresSelect.addEventListener('change', (event) => {
     currentScores = event.target.value;
 
+    if (event.target.value == 'All Scores') clearHighScoresBtn.disabled = true;
+    if (event.target.value == 'My Scores') clearHighScoresBtn.disabled = false;
+
     if (event.target.value == 'All Scores' && !currentCategory) {
-        clearHighScoresBtn.disabled = true;
         getHighScores();
         return;
     }
 
     if (event.target.value == 'My Scores' && !currentCategory) {
-        clearHighScoresBtn.disabled = false;
         getPersonalScores();
         return;
     }
@@ -195,7 +200,7 @@ categoriesSelect.addEventListener('change', event => {
     if (currentScores == 'All Scores') getFilteredScores(event.target.value);
 })
 
-clearHighScoresBtn.addEventListener('click', deletePersonalScores);
+clearHighScoresBtn.addEventListener('click', () => deletePersonalScores(currentCategory));
 
 // Invocations
 getHighScores();

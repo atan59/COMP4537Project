@@ -14,16 +14,16 @@ const cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
 
-var whitelist = ['http://localhost:3000',  'https://4537.azurewebsites.net', 'http://127.0.0.1:5500' /** other domains if any */ ]
+var whitelist = ['http://localhost:3000', 'https://4537.azurewebsites.net', 'http://127.0.0.1:5500' /** other domains if any */]
 var corsOptions = {
-  credentials: true,
-  origin: function(origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
+    credentials: true,
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
     }
-  }
 }
 
 app.use(cors(corsOptions));
@@ -317,7 +317,7 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
  *                                      example: 1
  */
 app.get(getStatsEndPoint, (req, res) => {
-    if(req.headers['set-cookie'] == accessToken){
+    if (req.headers['set-cookie'] == accessToken) {
         res.statusCode = 200;
         res.header('Content-Type', 'application/json');
         res.end(JSON.stringify(endpointStats));
@@ -426,7 +426,7 @@ app.post(loginEndPoint, (req, res) => {
                         }
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
-                        res.cookie("jwt", accessToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt:accessToken })).end();
+                        res.cookie("jwt", accessToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: accessToken })).end();
                         // res.end(JSON.stringify({ authorized: result, jwt:accessToken }));
                     })
                 } else {
@@ -636,7 +636,22 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
             }
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
+            endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
+            res.end(JSON.stringify(result));
+        })
+    })
+})
+
+app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
+    db.connect(() => {
+        db.query(`DELETE FROM score WHERE uuid = '${req.params.uuid}' AND category = '${req.params.category}'`, (err, result) => {
+            if (err) {
+                console.error(err);
+                throw err;
+            }
+            res.statusCode = 200;
+            res.header('Content-Type', 'application/json');
+            endpointStats.find(obj => obj.method === 'DELETE' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
         })
     })
