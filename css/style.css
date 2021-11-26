@@ -156,3 +156,6 @@ input::placeholder {
     font-size: 2rem;
     color: rgb(28, 26, 26);
 }
+.notyf__wrapper {
+    font-size: 2.5rem;
+}

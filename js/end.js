@@ -14,6 +14,13 @@ const MAX_HIGH_SCORES = 5;
 
 // Globals
 let response = null;
+let notyf = new Notyf({
+    duration: 5000,
+    position: {
+        x: 'right',
+        y: 'top',
+    }
+});
 
 console.log(uuid);
 
@@ -31,6 +38,11 @@ saveHighScore = async e => {
         name: username.value,
         highscore: mostRecentScore,
         category: mostRecentCategory
+    }
+
+    if (!/^[A-Za-z]+$/.test(data.name)) {
+        notyf.error('Your name can only contain letters');
+        return;
     }
 
     response = await fetch(postScoresURL, {
