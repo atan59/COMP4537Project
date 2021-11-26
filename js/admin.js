@@ -1,8 +1,8 @@
 // Constants
-// const statsURL = "http://localhost:3000/API/v1/stats";
-const statsURL = "https://s2api4537.azurewebsites.net/API/v1/stats";
-// const loginURL = "http://localhost:3000/API/v1/login";
-const loginURL = "https://s2api4537.azurewebsites.net/API/v1/login";
+const statsURL = "http://localhost:3000/API/v1/stats";
+// const statsURL = "https://s2api4537.azurewebsites.net/API/v1/stats";
+const loginURL = "http://localhost:3000/API/v1/login";
+// const loginURL = "https://s2api4537.azurewebsites.net/API/v1/login";
 
 // Selectors
 const mainContainer = document.querySelector('.container');
@@ -22,10 +22,18 @@ let notyf = new Notyf({
         y: 'top',
     }
 });
+let splitJwt;
 
 // Main Functions
 loadEndpoints = async () => {
-    response = await fetch(statsURL);
+    response = await fetch(statsURL, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
+        method: 'GET'
+    });
+    // response = await fetch(statsURL+ `?token=${token}`);
     if (response.ok) {
         endpoints = await response.json();
         endpointsTable.innerHTML = endpoints.map(stat => {
@@ -54,8 +62,13 @@ handleLogin = async e => {
     if (response.ok) {
         const result = await response.json();
         if (result.authorized) {
+            let jwt = result.jwt;
+            splitJwt = jwt.split(';').pop();
+            document.cookie = splitJwt;
             mainContainer.style.display = 'flex';
             formContainer.style.display = 'none';
+            // Invocations
+            loadEndpoints();
             return;
         }
     }
@@ -70,6 +83,3 @@ usernameInput.addEventListener('keyup', () => {
 passwordInput.addEventListener('keyup', () => {
     loginBtn.disabled = !usernameInput.value || !passwordInput.value;
 });
-
-// Invocations
-loadEndpoints();

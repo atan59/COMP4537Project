@@ -6,7 +6,27 @@ const bcrypt = require('bcrypt');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const PORT = process.env.PORT || 3000;
+const cors = require('cors')
 const app = express();
+const jwt = require('jsonwebtoken');
+const TOKEN_SECRET = require('crypto').randomBytes(64).toString('hex')
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+
+var whitelist = ['http://localhost:3000',  'https://4537.azurewebsites.net', 'http://127.0.0.1:5500' /** other domains if any */ ]
+var corsOptions = {
+  credentials: true,
+  origin: function(origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+app.use(cors(corsOptions));
 
 // Endpoints
 const getAllEndPoint = '/API/v1/questions';
@@ -20,6 +40,7 @@ const getScoresByUUIDAndCategoryEndPoint = '/API/v1/scores/:uuid/:category';
 const updateScoreByIDEndPoint = '/API/v1/scores/:id';
 
 // Globals
+let accessToken;
 const endpointStats = [
     {
         method: 'GET',
@@ -110,7 +131,8 @@ db.promise = sql => {
 
 app.use((req, res, next) => {
     res.header('Content-Type', 'text/html');
-    res.header('Access-Control-Allow-Origin', '*');
+    // res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+    res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     next();
@@ -295,9 +317,15 @@ app.get(getQuestionByIDEndPoint, (req, res) => {
  *                                      example: 1
  */
 app.get(getStatsEndPoint, (req, res) => {
-    res.statusCode = 200;
-    res.header('Content-Type', 'application/json');
-    res.end(JSON.stringify(endpointStats));
+    if(req.headers['set-cookie'] == accessToken){
+        res.statusCode = 200;
+        res.header('Content-Type', 'application/json');
+        res.end(JSON.stringify(endpointStats));
+    } else {
+        res.send("not authenticated, invalid token");
+        res.end();
+    }
+
 })
 
 /**
@@ -374,6 +402,10 @@ app.post(loginEndPoint, (req, res) => {
 
     req.on('end', () => {
         const loginCredentials = JSON.parse(body);
+        accessToken = '';
+        accessToken = jwt.sign({
+            data: loginCredentials.username,
+        }, TOKEN_SECRET, { expiresIn: 1800 });
         if (typeof (loginCredentials.username) != 'string' && typeof (loginCredentials.password) != 'string') {
             res.statusCode = 400;
             res.header('Content-Type', 'application/json');
@@ -394,11 +426,13 @@ app.post(loginEndPoint, (req, res) => {
                         }
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
-                        res.end(JSON.stringify({ authorized: result }));
+                        res.cookie("jwt", accessToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt:accessToken })).end();
+                        // res.end(JSON.stringify({ authorized: result, jwt:accessToken }));
                     })
                 } else {
                     res.statusCode = 401;
                     res.header('Content-Type', 'application/json');
+                    console.log('cookie is now created');
                     res.end(JSON.stringify({ authorized: false }));
                 }
             })
@@ -445,6 +479,7 @@ app.get(AllScoresEndPoint, (req, res) => {
             }
             res.statusCode = 200;
             res.header('Content-Type', 'application/json');
+            console.log(req.cookies['jwt']);
             endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
             res.end(JSON.stringify(result));
         })
