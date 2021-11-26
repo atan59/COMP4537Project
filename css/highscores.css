@@ -85,3 +85,22 @@ body {
     cursor: pointer;
     border-bottom: 5px solid rgb(255, 247, 9)
 }
+
+span {
+    font-size: 2.8rem;
+    overflow: auto;
+}
+
+span:hover[contenteditable="true"] {
+    cursor: pointer;
+    caret-color: #fff;
+    font-size: 3.5rem;
+}
+
+span:focus[contenteditable="true"] {
+    font-size: 3.5rem;
+}
+
+.notyf__wrapper {
+    font-size: 2.5rem;
+  }

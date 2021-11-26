@@ -17,6 +17,7 @@ const AllScoresEndPoint = '/API/v1/scores';
 const getScoresByUUIDEndPoint = '/API/v1/scores/:uuid';
 const getScoresByCategoryEndPoint = '/API/v1/scores/categories/:category';
 const getScoresByUUIDAndCategoryEndPoint = '/API/v1/scores/:uuid/:category';
+const updateScoreByIDEndPoint = '/API/v1/scores/:id';
 
 // Globals
 const endpointStats = [
@@ -58,6 +59,11 @@ const endpointStats = [
     {
         method: 'GET',
         endpoint: getScoresByUUIDAndCategoryEndPoint.replace(':', '').replace(':', ''),
+        requests: 0
+    },
+    {
+        method: 'PUT',
+        endpoint: updateScoreByIDEndPoint.replace(':', ''),
         requests: 0
     }
 ];
@@ -637,7 +643,6 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
  *                                  example: Incorrect request body
  */
 app.delete(getScoresByUUIDEndPoint, (req, res) => {
-
     if (req.params.uuid && typeof (req.params.uuid) != 'string') {
         res.statusCode = 400;
         res.header('Content-Type', 'application/json');
@@ -656,6 +661,42 @@ app.delete(getScoresByUUIDEndPoint, (req, res) => {
             endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
             res.end(JSON.stringify({ affectedRows: result.affectedRows }));
         })
+    })
+})
+
+app.put(updateScoreByIDEndPoint, (req, res) => {
+    if (req.params.id && typeof (req.params.id) != 'string') {
+        res.statusCode = 400;
+        res.header('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: "Incorrect request body" }))
+        return
+    }
+
+    let body = "";
+
+    req.on('data', chunk => {
+        if (chunk != null) body += chunk;
+    })
+
+    req.on('end', () => {
+        const userBody = JSON.parse(body);
+
+        db.promise(`SELECT * FROM score WHERE id = ${req.params.id}`)
+            .then(result => {
+                let sql;
+
+                if (result.length === 0) {
+                    res.statusCode = 400;
+                    res.header('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: `No score found with id: ${req.params.id}` }))
+                }
+                sql = `UPDATE score SET name = '${userBody.name}' WHERE id = ${result[0].id}`;
+                return db.promise(sql);
+            }).then(result => {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify(result));
+            }).catch(err => console.log(err));
     })
 })
 

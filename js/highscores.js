@@ -13,6 +13,51 @@ let highScores = [];
 let response = null;
 let currentScores = scoresSelect.value;
 let currentCategory = categoriesSelect.value;
+let notyf = new Notyf({
+    duration: 5000,
+    position: {
+        x: 'right',
+        y: 'top',
+    }
+});
+
+// Helper functions
+const nameValidate = (name) => !(name === '')
+
+const lettersOnly = (event, scoreID) => {
+    const charCode = event.keyCode;
+    const newName = event.target.innerText;
+
+    if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) return true;
+
+    if (charCode == 13) {
+        if (!nameValidate(newName)) {
+            notyf.error('Your name cannot be empty!')
+            return false
+        }
+        updateName(scoreID, newName);
+        return false;
+    } else {
+        return false;
+    }
+}
+
+const updateName = async (id, name) => {
+    response = await fetch(url + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: name })
+    });
+    
+    if (response.ok) {
+        window.location.reload();
+        return;
+    }
+    
+    notyf.error('Sorry, there was a problem. Try again later!')
+}
 
 const getHighScores = async () => {
     response = await fetch(url);
@@ -57,7 +102,7 @@ const getPersonalScores = async () => {
         highScores = await response.json();
 
         highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+            return `<li class="high-score"><span contenteditable='true' onkeypress='return lettersOnly(event, ${score.id})'>${score.name}</span> - ${score.highscore}</li>`
         }).join('');
     }
 }
