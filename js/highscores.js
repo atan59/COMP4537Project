@@ -42,6 +42,10 @@ const lettersOnly = (event, scoreID) => {
     }
 }
 
+const sortHighScores = (i, j) => {
+    return j.highscore - i.highscore
+}
+
 const updateName = async (id, name) => {
     response = await fetch(url + id, {
         method: 'PUT',
@@ -63,7 +67,7 @@ const getHighScores = async () => {
     response = await fetch(url);
     if (response.ok) {
         highScores = await response.json();
-
+        highScores.sort((i, j) => sortHighScores(i, j));
         highScoresList.innerHTML = highScores.map(score => {
             return `<li class="high-score">${score.name} - ${score.highscore}</li>`
         }).join('');
@@ -76,6 +80,7 @@ const getFilteredScores = async category => {
     response = await fetch(`${url}categories/${category}`);
     if (response.ok) {
         highScores = await response.json();
+        highScores.sort((i, j) => sortHighScores(i, j));
 
         highScoresList.innerHTML = highScores.map(score => {
             return `<li class="high-score">${score.name} - ${score.highscore}</li>`
@@ -89,6 +94,7 @@ const getFilteredPersonalScores = async category => {
     response = await fetch(`${url}${uuid}/${category}`);
     if (response.ok) {
         highScores = await response.json();
+        highScores.sort((i, j) => sortHighScores(i, j));
 
         highScoresList.innerHTML = highScores.map(score => {
             return `<li class="high-score">${score.name} - ${score.highscore}</li>`
@@ -100,6 +106,7 @@ const getPersonalScores = async () => {
     response = await fetch(url + uuid)
     if (response.ok) {
         highScores = await response.json();
+        highScores.sort((i, j) => sortHighScores(i, j));
 
         highScoresList.innerHTML = highScores.map(score => {
             return `<li class="high-score"><span contenteditable='true' onkeypress='return lettersOnly(event, ${score.id})'>${score.name}</span> - ${score.highscore}</li>`
