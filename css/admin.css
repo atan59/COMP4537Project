@@ -4,41 +4,40 @@ body {
 
 .container {
   display: none;
+  max-width: 1140px;
 }
 
-#endpointTitle {
-  margin-bottom: 2rem;
+table {
+  border-radius: 0.75rem;
 }
 
-#headings {
+table > *:not(caption) {
   font-size: 8rem;
-  height: 10rem;
 }
 
-#endpointsTable {
-  margin-bottom: 4rem;
-  border-spacing: 1rem;
+caption {
+  font-size: 4rem;
+  color: rgb(3, 252, 82);
 }
 
-#endpointsTable > * {
-  font-size: 7rem;
-  text-align: center;
-}
-
-#endpointsTable > tr:not(:first-child) {
-  padding-bottom: 2rem;
+h1 {
+  color: rgb(3, 252, 82);
 }
 
 .notyf__wrapper {
   font-size: 2.5rem;
 }
 
-@media screen and (max-width: 896px) {
-  #headings {
-    font-size: 7rem;
-  }
-
-  #endpointsTable > * {
+@media screen and (max-width: 875px) {
+  table > *:not(caption) {
     font-size: 5rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
   }
 }

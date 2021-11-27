@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
@@ -28,14 +29,19 @@
         </div>
     </div>
     <div class="container">
-        <div id="endpoints" class="flex-center flex-column">
+        <div id="endpoints" class="flex-center flex-column table-responsive">
             <h1 id="endpointTitle">Stats</h1>
-            <table id="endpointsTable">
-                <tr id="headings">
-                    <th>Method</th>
-                    <th>Endpoint</th>
-                    <th>Requests</th>
-                </tr>
+            <table class="table table-bordered w-auto">
+                <caption>List of endpoints</caption>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Requests</th>
+                    </tr>
+                </thead>
+                <tbody id="endpointsBody">
+                </tbody>
             </table>
             <a href="./index.html" class="btn">
                 Go Home<i class="fas fa-home"></i>
