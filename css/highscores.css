@@ -2,14 +2,23 @@ body {
     color: #fff;
 }
 
+.container {
+    overflow: hidden;
+}
+
 #highScoresList {
     list-style: none;
     margin-bottom: 4rem;
+    max-width: 80vw;
+    max-height: 80vw;
+    overflow: auto;
 }
 
 .high-score {
     font-size: 2.8rem;
     margin-bottom: 0.5rem;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .danger {
@@ -103,4 +112,32 @@ span:focus[contenteditable="true"] {
 
 .notyf__wrapper {
     font-size: 2.5rem;
-  }
+}
+
+/* @media screen and (max-height: 960px) {
+    #highScoresList {
+        max-height: 35rem;
+    }
+}
+
+@media screen and (max-height: 886px) {
+    #highScoresList {
+        max-height: 25rem;
+    }
+} */
+
+@media screen and (max-width: 583px) {
+    .tab {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 547px) {
+    .tab {
+        flex-direction: column;
+    }
+
+    /* #highScoresList {
+        max-height: 70vw;
+    } */
+}
