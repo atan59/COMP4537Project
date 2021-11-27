@@ -36,7 +36,7 @@ loadEndpoints = async () => {
     // response = await fetch(statsURL+ `?token=${token}`);
     if (response.ok) {
         endpoints = await response.json();
-        endpointsTable.innerHTML = endpoints.map(stat => {
+        endpointsTable.innerHTML += endpoints.map(stat => {
             return `
                 <tr>
                     <td class="end-point">${stat.method}</td>

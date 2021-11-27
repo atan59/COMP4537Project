@@ -6,24 +6,39 @@ body {
   display: none;
 }
 
-table {
-    margin-bottom: 6rem;
+#endpointTitle {
+  margin-bottom: 2rem;
 }
 
-th {
-  font-size: 5.4rem;
-  color: #fff;
-  margin-bottom: 5rem;
-  padding-right: 3rem;
+#headings {
+  font-size: 8rem;
+  height: 10rem;
 }
 
-.end-point {
-  font-size: 2.8rem;
-  margin-bottom: 0.5rem;
+#endpointsTable {
+  margin-bottom: 4rem;
+  border-spacing: 1rem;
+}
+
+#endpointsTable > * {
+  font-size: 7rem;
   text-align: center;
-  padding-top: 2rem;
+}
+
+#endpointsTable > tr:not(:first-child) {
+  padding-bottom: 2rem;
 }
 
 .notyf__wrapper {
   font-size: 2.5rem;
+}
+
+@media screen and (max-width: 896px) {
+  #headings {
+    font-size: 7rem;
+  }
+
+  #endpointsTable > * {
+    font-size: 5rem;
+  }
 }
