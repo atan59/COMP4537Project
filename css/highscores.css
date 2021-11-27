@@ -108,6 +108,8 @@ span:hover[contenteditable="true"] {
 
 span:focus[contenteditable="true"] {
     font-size: 3.5rem;
+    outline: none;
+    border: 2px solid rgb(3, 252, 82);
 }
 
 .notyf__wrapper {

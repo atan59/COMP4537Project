@@ -35,7 +35,7 @@ const checkValidUpdate = (originalValue, newValue, scoreID) => {
         notyf.error(`Your name cannot exceed ${MAX_CHARS} characters!`)
         return false
     }
-    
+
     if (originalValue !== newValue) updateName(scoreID, newValue);
 }
 
@@ -128,7 +128,19 @@ const getFilteredPersonalScores = async category => {
         highScores.sort((i, j) => sortHighScores(i, j));
 
         highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+            return `<li class="high-score">
+                        <span onfocus='return handleFocus(event)'
+                            spellcheck='false' 
+                            contenteditable='true' 
+                            data-default='${score.name}'
+                            onkeypress='return handleKeyPress(event, ${score.id})'
+                            onkeyup='return handleBackSpace(event, ${score.id})'
+                            ondragenter='return false'
+                            ondragleave='return false'
+                            ondragover='return false' 
+                            ondrop='return false'>
+                        ${score.name}</span> - ${score.highscore}
+                    </li>`
         }).join('');
     }
 }
@@ -142,6 +154,7 @@ const getPersonalScores = async () => {
         highScoresList.innerHTML = highScores.map(score => {
             return `<li class="high-score">
                         <span onfocus='return handleFocus(event)' 
+                              spellcheck='false'
                               contenteditable='true' 
                               data-default='${score.name}'
                               onkeypress='return handleKeyPress(event, ${score.id})'
