@@ -80,6 +80,11 @@ const endpointStats = [
         method: 'PUT',
         endpoint: updateScoreByIDEndPoint,
         requests: 0
+    },
+    {
+        method: 'DELETE',
+        endpoint: getScoresByUUIDAndCategoryEndPoint,
+        requests: 0
     }
 ];
 

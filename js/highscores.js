@@ -64,9 +64,16 @@ const handleKeyPress = (event, scoreID) => {
 
     if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) return true;
 
-    if (charCode == 13) checkValidUpdate(defaultValue, event.target.innerText, scoreID);
+    if (charCode === 13) {
+        checkValidUpdate(defaultValue, event.target.innerText, scoreID);
+    }
 
     return false;
+}
+
+// Handles backspace event (because backspace is not a keypress)
+const handleBackSpace = (event, scoreID) => {
+    if (event.keyCode === 8) handleKeyPress(event, scoreID);
 }
 
 // Main Functions
@@ -138,6 +145,7 @@ const getPersonalScores = async () => {
                               contenteditable='true' 
                               data-default='${score.name}'
                               onkeypress='return handleKeyPress(event, ${score.id})'
+                              onkeyup='return handleBackSpace(event, ${score.id})'
                               ondragenter='return false'
                               ondragleave='return false'
                               ondragover='return false' 
