@@ -4,26 +4,40 @@ body {
 
 .container {
   display: none;
+  max-width: 1140px;
 }
 
 table {
-    margin-bottom: 6rem;
+  border-radius: 0.75rem;
 }
 
-th {
-  font-size: 5.4rem;
-  color: #fff;
-  margin-bottom: 5rem;
-  padding-right: 3rem;
+table > *:not(caption) {
+  font-size: 8rem;
 }
 
-.end-point {
-  font-size: 2.8rem;
-  margin-bottom: 0.5rem;
-  text-align: center;
-  padding-top: 2rem;
+caption {
+  font-size: 4rem;
+  color: rgb(3, 252, 82);
+}
+
+h1 {
+  color: rgb(3, 252, 82);
 }
 
 .notyf__wrapper {
   font-size: 2.5rem;
+}
+
+@media screen and (max-width: 875px) {
+  table > *:not(caption) {
+    font-size: 5rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
 }

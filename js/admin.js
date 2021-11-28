@@ -7,7 +7,7 @@ const loginURL = "http://localhost:3000/API/v1/login";
 // Selectors
 const mainContainer = document.querySelector('.container');
 const formContainer = document.querySelector('.formContainer');
-const endpointsTable = document.querySelector('#endpointsTable');
+const endpointsBody = document.querySelector('#endpointsBody');
 const usernameInput = document.querySelector('#username');
 const passwordInput = document.querySelector('#password');
 const loginBtn = document.querySelector('#loginBtn');
@@ -36,7 +36,7 @@ loadEndpoints = async () => {
     // response = await fetch(statsURL+ `?token=${token}`);
     if (response.ok) {
         endpoints = await response.json();
-        endpointsTable.innerHTML = endpoints.map(stat => {
+        endpointsBody.innerHTML = endpoints.map(stat => {
             return `
                 <tr>
                     <td class="end-point">${stat.method}</td>
