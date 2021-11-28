@@ -21,14 +21,22 @@ let questions = [];
 let url = "http://localhost:3000/API/v1/questions";
 // let url = "https://s2api4537.azurewebsites.net/API/v1/questions";
 let response = null;
+let splitJwt;
 
 startGame = async () => {
     questionCounter = 0;
     score = 0;
+    splitJwt = document.cookie.split(';').pop();
 
     if (localStorage.getItem('category')) url += `/?category=${localStorage.getItem('category')}`;
 
-    response = await fetch(url);
+    response = await fetch(url, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
+        method: 'GET'
+    });
     if (response.ok) {
         questions = await response.json();
         questions.sort(() => Math.random() - 0.5);

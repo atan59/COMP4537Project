@@ -37,8 +37,10 @@ const getScoresByUUIDEndPoint = '/API/v1/scores/:uuid';
 const getScoresByCategoryEndPoint = '/API/v1/scores/categories/:category';
 const getScoresByUUIDAndCategoryEndPoint = '/API/v1/scores/:uuid/:category';
 const updateScoreByIDEndPoint = '/API/v1/scores/:id';
+const getToken = '/API/v1/token';
 
 // Globals
+let adminToken;
 let accessToken;
 const endpointStats = [
     {
@@ -84,6 +86,11 @@ const endpointStats = [
     {
         method: 'DELETE',
         endpoint: getScoresByUUIDAndCategoryEndPoint,
+        requests: 0
+    },
+    {
+        method: 'GET',
+        endpoint: getToken,
         requests: 0
     }
 ];
@@ -199,10 +206,15 @@ app.get(getAllEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
-            res.end(JSON.stringify(result));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
+                res.end(JSON.stringify(result));
+            } else {
+                res.send("not authenticated to start game, invalid token");
+                res.end();
+            }
         })
     })
 })
@@ -236,7 +248,7 @@ app.get(getAllEndPoint, (req, res) => {
  *                                      example: 1
  */
 app.get(getStatsEndPoint, (req, res) => {
-    if (req.headers['set-cookie'] == accessToken) {
+    if (req.headers['set-cookie'] == adminToken) {
         res.statusCode = 200;
         res.header('Content-Type', 'application/json');
         const adminStats = endpointStats.map(obj => {
@@ -323,8 +335,8 @@ app.post(loginEndPoint, (req, res) => {
 
     req.on('end', () => {
         const loginCredentials = JSON.parse(body);
-        accessToken = '';
-        accessToken = jwt.sign({
+        adminToken = '';
+        adminToken = jwt.sign({
             data: loginCredentials.username,
         }, TOKEN_SECRET, { expiresIn: 1800 });
         if (typeof (loginCredentials.username) != 'string' && typeof (loginCredentials.password) != 'string') {
@@ -347,13 +359,12 @@ app.post(loginEndPoint, (req, res) => {
                         }
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
-                        res.cookie("jwt", accessToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: accessToken })).end();
-                        // res.end(JSON.stringify({ authorized: result, jwt:accessToken }));
+                        res.cookie("jwt", adminToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: adminToken })).end();
+                        // res.end(JSON.stringify({ authorized: result, jwt:adminToken }));
                     })
                 } else {
                     res.statusCode = 401;
                     res.header('Content-Type', 'application/json');
-                    console.log('cookie is now created');
                     res.end(JSON.stringify({ authorized: false }));
                 }
             })
@@ -398,11 +409,15 @@ app.get(AllScoresEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            console.log(req.cookies['jwt']);
-            endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
-            res.end(JSON.stringify(result));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
+                res.end(JSON.stringify(result));
+            } else {
+                res.send("not authenticated to get all scores, invalid token");
+                res.end();
+            }
         })
     })
 })
@@ -448,17 +463,19 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => {
-                console.log(obj);
-                if (obj.method === "GET" && obj.endpoint === getScoresByUUIDEndPoint) {
-                    console.log('hi');
-                    console.log(obj);
-                    obj.requests++;
-                }
-            })
-            res.end(JSON.stringify(result));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => {
+                    if (obj.method === "GET" && obj.endpoint === getScoresByUUIDEndPoint) {
+                        obj.requests++;
+                    }
+                })
+                res.end(JSON.stringify(result));
+            } else {
+                res.send("not authenticated to get your personal scores, invalid token");
+                res.end();
+            }
         })
     })
 })
@@ -507,10 +524,15 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
-            res.end(JSON.stringify(result));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
+                res.end(JSON.stringify(result));
+            } else {
+                res.send("not authenticated to get scores by selected categories, invalid token");
+                res.end();
+            }
         })
     })
 })
@@ -562,12 +584,34 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
-            res.end(JSON.stringify(result));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
+                res.end(JSON.stringify(result));
+            } else {
+                res.send("not authenticated to get your personal scores by category, invalid token");
+                res.end();
+            }
         })
     })
+})
+
+/**
+ * A GET request that points to /API/v1/token
+ * generates a jwt token as access token (note: not admin token)
+ * returns the jwt token back to client as a cookie
+ */
+app.get(getToken, (req, res) => {
+    accessToken = '';
+    accessToken = jwt.sign({
+        data: 'player',
+    }, TOKEN_SECRET, { expiresIn: 1800 });
+
+    res.statusCode = 200;
+    res.header('Content-Type', 'application/json');
+    endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getToken && obj.requests++);
+    res.cookie("playerjwt", accessToken, { httpOnly: false }).send(JSON.stringify({ playerjwt: accessToken })).end();
 })
 
 app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
@@ -634,10 +678,15 @@ app.delete(getScoresByUUIDEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
-            res.end(JSON.stringify({ affectedRows: result.affectedRows }));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
+                res.end(JSON.stringify({ affectedRows: result.affectedRows }));
+            } else {
+                res.send("not authenticated to delete all your personal scores, invalid token");
+                res.end();
+            }
         })
     })
 })

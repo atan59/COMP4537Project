@@ -8,7 +8,6 @@ const url = 'http://localhost:3000/API/v1/scores/';
 const MAX_CHARS = 20;
 // const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
 
-
 // Globals
 let highScores = [];
 let response = null;
@@ -21,6 +20,8 @@ let notyf = new Notyf({
         y: 'top',
     }
 });
+let splitJwt;  // getting the cookie token, formatting it
+splitJwt = document.cookie.split(';').pop();
 
 // Helper functions
 const nameValidate = (name) => !(name === '')
@@ -80,8 +81,10 @@ const handleBackSpace = (event, scoreID) => {
 const updateName = async (id, name) => {
     response = await fetch(url + id, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Set-Cookie': splitJwt
         },
         body: JSON.stringify({ name: name })
     });
@@ -95,7 +98,13 @@ const updateName = async (id, name) => {
 }
 
 const getHighScores = async () => {
-    response = await fetch(url);
+    response = await fetch(url, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
+        method: 'GET'
+    });
     if (response.ok) {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
@@ -108,7 +117,13 @@ const getHighScores = async () => {
 const getFilteredScores = async category => {
     highScoresList.innerHTML = '';
 
-    response = await fetch(`${url}categories/${category}`);
+    response = await fetch(`${url}categories/${category}`, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
+        method: 'GET'
+    });
     if (response.ok) {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
@@ -122,7 +137,13 @@ const getFilteredScores = async category => {
 const getFilteredPersonalScores = async category => {
     highScoresList.innerHTML = '';
 
-    response = await fetch(`${url}${uuid}/${category}`);
+    response = await fetch(`${url}${uuid}/${category}`, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
+        method: 'GET'
+    });
     if (response.ok) {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
@@ -134,7 +155,13 @@ const getFilteredPersonalScores = async category => {
 }
 
 const getPersonalScores = async () => {
-    response = await fetch(url + uuid)
+    response = await fetch(url + uuid, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
+        method: 'GET'
+    })
     if (response.ok) {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
@@ -165,6 +192,10 @@ const deletePersonalScores = async (category) => {
     if (category) requestURL += `/${category}`
 
     response = await fetch(requestURL, {
+        headers: {
+            'Set-Cookie': splitJwt
+        },
+        credentials: 'include',
         method: 'DELETE'
     });
     if (response.ok) {

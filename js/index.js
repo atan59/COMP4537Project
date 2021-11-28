@@ -1,3 +1,19 @@
+const getTokenURL = "http://localhost:3000/API/v1/token";
+let splitJwt;
+
+// get player token on init
+getPlayerToken = async () => { // any need to setLocalStorage?
+    response = await fetch(getTokenURL);
+    if (response.ok) {
+        const result = await response.json(); 
+        let playerjwt = result.playerjwt;
+        splitJwt = playerjwt.split(';').pop();
+        document.cookie = splitJwt;
+        return;   
+    }
+}
+
+
 // Helper Functions
 const uuidv4 = () => {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -13,4 +29,5 @@ const setUUID = () => {
 }
 
 // Invocations
+getPlayerToken();
 setUUID();
