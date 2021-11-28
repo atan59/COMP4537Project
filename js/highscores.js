@@ -1,5 +1,6 @@
 // Constants
-const highScoresList = document.querySelector('#highScoresList');
+const highScoresTable = document.querySelector('#scoresBody');
+const tableHeaders = document.querySelector('#tableHeaders');
 const scoresSelect = document.querySelector('#all-my');
 const categoriesSelect = document.querySelector('#categories');
 const clearHighScoresBtn = document.getElementById('clearHighScoresBtn');
@@ -13,6 +14,7 @@ let highScores = [];
 let response = null;
 let currentScores = scoresSelect.value;
 let currentCategory = categoriesSelect.value;
+let editState = false;
 let notyf = new Notyf({
     duration: 5000,
     position: {
@@ -26,55 +28,67 @@ splitJwt = document.cookie.split(';').pop();
 // Helper functions
 const nameValidate = (name) => !(name === '')
 
+const lettersOnly = (event) => /[a-z]/i.test(event.key)
+
 const checkValidUpdate = (originalValue, newValue, scoreID) => {
     if (!nameValidate(newValue)) {
         notyf.error('Your name cannot be empty!')
         return false
     }
 
-    if (newValue.length > MAX_CHARS) {
-        notyf.error(`Your name cannot exceed ${MAX_CHARS} characters!`)
-        return false
-    }
+    if (originalValue !== newValue) {
+        updateName(scoreID, newValue);
+        return true;
+    };
 
-    if (originalValue !== newValue) updateName(scoreID, newValue);
+    return false;
 }
 
 const sortHighScores = (i, j) => j.highscore - i.highscore
 
-const handlePaste = (event) => {
-    console.log('hi');
-    event.preventDefault();
-    return false;
+const setEditState = (tr, originalValue, children) => {
+    tr.innerHTML = `
+        <input type="text" 
+               class="editScoreField"
+               maxlength="${MAX_CHARS}"
+               onpaste="return false"
+               ondrop="return false"
+               onkeypress="return lettersOnly(event)"
+               value='${originalValue}'/>
+        <td class="high-score">${children[1].innerText}</td>
+        <td class="high-score">${children[2].innerText}</td>
+        <td class="high-score"><a href="#" class="done"><i class="fas fa-check-square"></i></a></td>
+    `
+    editState = true;
 }
 
-const handleFocus = (event) => {
-    if (event.target.onpaste === null) {
-        event.target.onpaste = (event) => handlePaste(event);
-    }
+const revertEditState = (tr, score) => {
+    tr.innerHTML = `
+        <td class="high-score">${score.name}</td>
+        <td class="high-score">${score.highscore}</td>
+        <td class="high-score">${score.category}</td>
+        <td class="high-score"><a href="#" onclick='handleEdit(event, ${JSON.stringify(score)})'><i class="fas fa-edit"></i></a></td>
+    `;
+    editState = false;
 }
 
-const handleKeyPress = (event, scoreID) => {
-    const charCode = event.keyCode;
-    const defaultValue = event.target.getAttribute('data-default');
-    console.log(event);
+const handleEdit = (event, score) => {
+    const tr = event.target.parentNode.parentNode.parentNode;
+    const tdArr = tr.children;
+    const originalValue = tdArr[0].innerText;
 
-    if (event.target.onblur === null) {
-        event.target.onblur = (event) => checkValidUpdate(defaultValue, event.target.innerText, scoreID);
-    }
+    if (editState) return;
 
-    if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode == 8) return true;
+    setEditState(tr, originalValue, tdArr);
 
-    if (charCode === 13) {
-        checkValidUpdate(defaultValue, event.target.innerText, scoreID);
-    }
+    const input = document.querySelector('.editScoreField');
+    const checkMark = document.querySelector('.done');
 
-    return false;
-}
-
-// Handles backspace event (because backspace is not a keypress)
-const handleBackSpace = (event, scoreID) => {
-    if (event.keyCode === 8) handleKeyPress(event, scoreID);
+    checkMark.addEventListener('click', () => {
+        if (!checkValidUpdate(originalValue, input.value, score.id)) {
+            revertEditState(tr, score);
+        }
+    })
 }
 
 // Main Functions
@@ -108,14 +122,22 @@ const getHighScores = async () => {
     if (response.ok) {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
-        highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+
+        if (tableHeaders.childElementCount === 4) tableHeaders.removeChild(tableHeaders.lastChild);
+        highScoresTable.innerHTML = highScores.map(score => {
+            return `
+                <tr>
+                    <td class="high-score">${score.name}</td>
+                    <td class="high-score">${score.highscore}</td>
+                    <td class="high-score">${score.category}</td>
+                </tr>
+            `
         }).join('');
     }
 }
 
 const getFilteredScores = async category => {
-    highScoresList.innerHTML = '';
+    highScoresTable.innerHTML = '';
 
     response = await fetch(`${url}categories/${category}`, {
         headers: {
@@ -128,14 +150,21 @@ const getFilteredScores = async category => {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
 
-        highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score">${score.name} - ${score.highscore}</li>`
+        if (tableHeaders.childElementCount === 4) tableHeaders.removeChild(tableHeaders.lastChild);
+        highScoresTable.innerHTML = highScores.map(score => {
+            return `
+                <tr>
+                    <td class="high-score">${score.name}</td>
+                    <td class="high-score">${score.highscore}</td>
+                    <td class="high-score">${score.category}</td>
+                </tr>
+            `
         }).join('');
     }
 }
 
 const getFilteredPersonalScores = async category => {
-    highScoresList.innerHTML = '';
+    highScoresTable.innerHTML = '';
 
     response = await fetch(`${url}${uuid}/${category}`, {
         headers: {
@@ -148,20 +177,16 @@ const getFilteredPersonalScores = async category => {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
 
-        highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score">
-                        <span onfocus='return handleFocus(event)'
-                            spellcheck='false' 
-                            contenteditable='true' 
-                            data-default='${score.name}'
-                            onkeypress='return handleKeyPress(event, ${score.id})'
-                            onkeyup='return handleBackSpace(event, ${score.id})'
-                            ondragenter='return false'
-                            ondragleave='return false'
-                            ondragover='return false' 
-                            ondrop='return false'>
-                        ${score.name}</span> - ${score.highscore}
-                    </li>`
+        if (tableHeaders.childElementCount !== 4) tableHeaders.innerHTML += '<th></th>';
+        highScoresTable.innerHTML = highScores.map(score => {
+            return `
+                <tr>
+                    <td class="high-score">${score.name}</td>
+                    <td class="high-score">${score.highscore}</td>
+                    <td class="high-score">${score.category}</td>
+                    <td class="high-score"><a href="#" onclick='handleEdit(event, ${JSON.stringify(score)})'><i class="fas fa-edit"></i></a></td>
+                </tr>
+            `
         }).join('');
     }
 }
@@ -178,20 +203,16 @@ const getPersonalScores = async () => {
         highScores = await response.json();
         highScores.sort((i, j) => sortHighScores(i, j));
 
-        highScoresList.innerHTML = highScores.map(score => {
-            return `<li class="high-score">
-                        <span onfocus='return handleFocus(event)' 
-                              spellcheck='false'
-                              contenteditable='true' 
-                              data-default='${score.name}'
-                              onkeypress='return handleKeyPress(event, ${score.id})'
-                              onkeyup='return handleBackSpace(event, ${score.id})'
-                              ondragenter='return false'
-                              ondragleave='return false'
-                              ondragover='return false' 
-                              ondrop='return false'>
-                              ${score.name}</span> - ${score.highscore}
-                    </li>`
+        if (tableHeaders.childElementCount !== 4) tableHeaders.innerHTML += '<th></th>';
+        highScoresTable.innerHTML = highScores.map(score => {
+            return `
+                <tr>
+                    <td class="high-score">${score.name}</td>
+                    <td class="high-score">${score.highscore}</td>
+                    <td class="high-score">${score.category}</td>
+                    <td class="high-score"><a href="#" onclick='handleEdit(event, ${JSON.stringify(score)})'><i class="fas fa-edit"></i></a></td>
+                </tr>
+            `
         }).join('');
     }
 }
@@ -219,6 +240,7 @@ const deletePersonalScores = async (category) => {
 // Event Listeners
 scoresSelect.addEventListener('change', (event) => {
     currentScores = event.target.value;
+    editState = false;
 
     if (event.target.value == 'All Scores') clearHighScoresBtn.disabled = true;
     if (event.target.value == 'My Scores') clearHighScoresBtn.disabled = false;
@@ -238,6 +260,7 @@ scoresSelect.addEventListener('change', (event) => {
 
 categoriesSelect.addEventListener('change', event => {
     currentCategory = event.target.value;
+    editState = false;
 
     if (currentScores == 'My Scores' && !event.target.value) {
         getPersonalScores();

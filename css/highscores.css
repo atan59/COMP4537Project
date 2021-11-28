@@ -3,22 +3,7 @@ body {
 }
 
 .container {
-    overflow: hidden;
-}
-
-#highScoresList {
-    list-style: none;
-    margin-bottom: 4rem;
-    max-width: 80vw;
-    max-height: 80vw;
-    overflow: auto;
-}
-
-.high-score {
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
-    text-align: center;
-    white-space: nowrap;
+    max-width: 1140px;
 }
 
 .danger {
@@ -57,7 +42,7 @@ body {
 .tab-links:hover, .tab-links:focus {
     outline: none;
     cursor: pointer;
-    border-bottom: 5px solid rgb(255, 247, 9)
+    border-bottom: 5px solid rgb(3, 252, 82);
 }
 
 .fa-js,
@@ -67,9 +52,18 @@ body {
 .fa-docker,
 .fa-python,
 .fa-blender,
-.fa-trash-alt {
+.fa-trash-alt,
+.fa-edit {
     font-size: 3rem;
     margin-left: 1rem;
+}
+
+.fa-check-square {
+    font-size: 4rem;
+    margin-top: 2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    color: rgb(3, 252, 82);
 }
 
 .dropdown select {
@@ -92,54 +86,52 @@ body {
 .dropdown select:checked,
 .dropdown select:focus {
     cursor: pointer;
-    border-bottom: 5px solid rgb(255, 247, 9)
-}
-
-span {
-    font-size: 2.8rem;
-    overflow: auto;
-}
-
-span:hover[contenteditable="true"] {
-    cursor: pointer;
-    caret-color: #fff;
-    font-size: 3.5rem;
-}
-
-span:focus[contenteditable="true"] {
-    font-size: 3.5rem;
-    outline: none;
-    border: 2px solid rgb(3, 252, 82);
+    border-bottom: 5px solid rgb(3, 252, 82);
 }
 
 .notyf__wrapper {
     font-size: 2.5rem;
 }
 
-/* @media screen and (max-height: 960px) {
-    #highScoresList {
-        max-height: 35rem;
-    }
+table {
+    border-radius: 0.75rem;
+}
+  
+table > *:not(caption) {
+    font-size: 8rem;
+}
+  
+caption {
+    font-size: 4rem;
+    color: rgb(3, 252, 82);
+}
+  
+h1 {
+    color: rgb(3, 252, 82);
 }
 
-@media screen and (max-height: 886px) {
-    #highScoresList {
-        max-height: 25rem;
-    }
-} */
-
-@media screen and (max-width: 583px) {
-    .tab {
-        display: flex;
-    }
+input {
+    margin: 1.5rem;
+    /* width: 20rem; */
+    padding: 1.5rem;
+    font-size: 1.8rem;
+    box-shadow: 0 0.1rem 1.4rem 0 rgba(86, 185, 235, 0.5);
 }
 
-@media screen and (max-width: 547px) {
-    .tab {
-        flex-direction: column;
-    }
+input::placeholder {
+    color: #aaa;
+}
 
-    /* #highScoresList {
-        max-height: 70vw;
-    } */
+@media screen and (max-width: 875px) {
+    table > *:not(caption) {
+      font-size: 5rem;
+    }
+}
+  
+@media screen and (max-width: 576px) {
+    table {
+      display: block;
+      overflow-x: auto;
+      width: 100%;
+    }
 }
