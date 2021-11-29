@@ -14,14 +14,15 @@ const cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
 
-var whitelist = ['http://localhost:3000', 'https://4537.azurewebsites.net', 'http://127.0.0.1:5500' /** other domains if any */]
+var whitelist = ['http://localhost:3000','http://localhost:3000/4537/termproject/API/V1/documentation', 'https://4537.azurewebsites.net', 'https://s2api4537.azurewebsites.net', 'https://s2api4537.azurewebsites.net/4537/termproject/API/V1/documentation','http://127.0.0.1:5500', 'http://127.0.0.1:5500/4537/termproject/API/V1/documentation', 'http://127.0.0.1:5500/documentation' /** other domains if any */]
 var corsOptions = {
     credentials: true,
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
+        if (!origin || whitelist.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by CORS'))
+            // callback(null, true)
         }
     }
 }
