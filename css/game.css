@@ -83,3 +83,19 @@ pre {
     display: inline-block !important;
     pointer-events: none !important;
 }
+
+@media screen and (max-width: 876px) {
+    .choice-container {
+        min-width: 40rem;
+    }
+}
+
+@media screen and (max-width: 465px) {
+    .choice-container {
+        min-width: 20rem;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+}

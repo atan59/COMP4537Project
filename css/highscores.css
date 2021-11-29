@@ -169,6 +169,12 @@ input::placeholder {
         font-size: 2.5rem;
     }
 }
+
+@media screen and (max-height: 1057px) {
+    .table-container {
+        max-height: 40rem;
+    }
+}
   
 @media screen and (max-width: 576px) {
     .table-container {
@@ -190,6 +196,7 @@ input::placeholder {
     table >  *:not(caption) {
         font-size: 5rem;
     }
+
     .dropdown select {
         margin-right: 0;
     }
