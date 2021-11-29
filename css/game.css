@@ -68,7 +68,7 @@ body {
     width: 0%;
 }
 
-@media screen and (max-width: 768px) {
+/* @media screen and (max-width: 768px) {
     #game {
         height: 100%;
         width: 100%;
@@ -92,7 +92,7 @@ body {
         font-size: x-large;
         position: relative;
     }
-}
+} */
 
 pre {
     font-family: 'Menlo', 'Monaco', monospace !important;
@@ -108,6 +108,10 @@ pre {
     .choice-container {
         min-width: 40rem;
     }
+
+    h1 {
+        font-size: 3rem;
+    }
 }
 
 @media screen and (max-width: 465px) {
@@ -117,5 +121,15 @@ pre {
 
     h1 {
         font-size: 3rem;
+    }
+}
+
+@media screen and (max-height: 736px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .choice-container {
+        max-height: 8rem;
     }
 }

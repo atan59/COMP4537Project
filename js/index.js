@@ -3,7 +3,7 @@ const getTokenURL = "https://s2api4537.azurewebsites.net/API/v1/token";
 let splitJwt;
 
 // get player token on init
-getPlayerToken = async () => { // any need to setLocalStorage?
+getPlayerToken = async () => {
     response = await fetch(getTokenURL);
     if (response.ok) {
         const result = await response.json(); 

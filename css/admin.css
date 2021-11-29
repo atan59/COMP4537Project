@@ -28,9 +28,38 @@ h1 {
   font-size: 2.5rem;
 }
 
+@media screen and (max-height: 1034px) {
+  table > *:not(caption) {
+    font-size: 5rem;
+  }
+}
+
 @media screen and (max-width: 875px) {
   table > *:not(caption) {
     font-size: 5rem;
+  }
+}
+
+@media screen and (max-height: 835px) {
+  caption {
+    display: none;
+  }
+}
+
+@media screen and (max-height: 754px) {
+  #endpointTitle {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  caption {
+    display: none;
+  }
+}
+
+@media screen and (max-height: 698px) {
+  table > *:not(caption) {
+    font-size: 4rem;
   }
 }
 

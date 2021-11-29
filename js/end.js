@@ -23,8 +23,6 @@ let notyf = new Notyf({
     }
 });
 
-console.log(uuid);
-
 finalScore.innerText = mostRecentScore;
 
 username.addEventListener('keyup', () => {

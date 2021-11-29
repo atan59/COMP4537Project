@@ -1,3 +1,4 @@
+// Constants
 const express = require('express');
 const url = require('url');
 const mysql = require('mysql');
@@ -5,15 +6,17 @@ const fs = require('fs');
 const bcrypt = require('bcrypt');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const PORT = process.env.PORT || 3000;
 const cors = require('cors')
 const app = express();
 const jwt = require('jsonwebtoken');
 const TOKEN_SECRET = require('crypto').randomBytes(64).toString('hex')
 const cookieParser = require('cookie-parser');
 
+const PORT = process.env.PORT || 3000;
+
 app.use(cookieParser());
 
+// CORS (with specific domains)
 var whitelist = ['http://localhost:3000','http://localhost:3000/4537/termproject/API/V1/documentation', 'https://4537.azurewebsites.net', 'https://s2api4537.azurewebsites.net', 'https://s2api4537.azurewebsites.net/4537/termproject/API/V1/documentation','http://127.0.0.1:5500', 'http://127.0.0.1:5500/4537/termproject/API/V1/documentation', 'http://127.0.0.1:5500/documentation' /** other domains if any */]
 var corsOptions = {
     credentials: true,
@@ -45,6 +48,11 @@ let accessToken;
 const endpointStats = [
     {
         method: 'GET',
+        endpoint: getToken,
+        requests: 0
+    },
+    {
+        method: 'GET',
         endpoint: getAllEndPoint,
         requests: 0
     },
@@ -59,21 +67,6 @@ const endpointStats = [
         requests: 0
     },
     {
-        method: 'POST',
-        endpoint: AllScoresEndPoint,
-        requests: 0
-    },    
-    {
-        method: 'POST',
-        endpoint: loginEndPoint,
-        requests: 0
-    },
-    {
-        method: 'DELETE',
-        endpoint: getScoresByUUIDEndPoint,
-        requests: 0
-    },
-    {
         method: 'GET',
         endpoint: getScoresByCategoryEndPoint,
         requests: 0
@@ -84,23 +77,33 @@ const endpointStats = [
         requests: 0
     },
     {
+        method: 'POST',
+        endpoint: AllScoresEndPoint,
+        requests: 0
+    },    
+    {
+        method: 'POST',
+        endpoint: loginEndPoint,
+        requests: 0
+    },
+    {
         method: 'PUT',
         endpoint: updateScoreByIDEndPoint,
         requests: 0
     },
     {
         method: 'DELETE',
-        endpoint: getScoresByUUIDAndCategoryEndPoint,
+        endpoint: getScoresByUUIDEndPoint,
         requests: 0
     },
     {
-        method: 'GET',
-        endpoint: getToken,
+        method: 'DELETE',
+        endpoint: getScoresByUUIDAndCategoryEndPoint,
         requests: 0
     }
 ];
 
-// const PORT = process.env.PORT || 8888;
+// Establish DB connection
 const db = mysql.createConnection({
     host: 'comp4537s2.mysql.database.azure.com',
     user: 's2',
@@ -108,6 +111,7 @@ const db = mysql.createConnection({
     database: 's2projectdb'
 });
 
+// Swagger Options
 const swaggerOptions = {
     swaggerDefinition: {
         openapi: "3.0.0",
@@ -142,14 +146,12 @@ db.promise = sql => {
 
 app.use((req, res, next) => {
     res.header('Content-Type', 'text/html');
-    // res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
     res.header('Access-Control-Allow-Credentials', true);
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     next();
 });
 
-// Get request (ALL) or By Category
 /**
  * @swagger
  * /API/v1/questions:
@@ -195,6 +197,18 @@ app.use((req, res, next) => {
  *                                  answer:
  *                                      type: integer
  *                                      example: 2
+ *          "401":
+ *              description: Unable to make the GET request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.get(getAllEndPoint, (req, res) => {
     let q = url.parse(req.url, true);
@@ -218,14 +232,13 @@ app.get(getAllEndPoint, (req, res) => {
                 res.end(JSON.stringify(result));
             } else {
                 res.statusCode = 401;
-                res.send("not authenticated to start game, invalid token");
-                res.end();
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
             }
         })
     })
 })
 
-// Get stats for all endpoints
 /**
  * @swagger
  * /API/v1/stats:
@@ -252,6 +265,18 @@ app.get(getAllEndPoint, (req, res) => {
  *                                  requests:
  *                                      type: integer
  *                                      example: 1
+ *          "401":
+ *              description: Unable to make the GET request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.get(getStatsEndPoint, (req, res) => {
     if (req.headers['set-cookie'] == adminToken) {
@@ -262,8 +287,9 @@ app.get(getStatsEndPoint, (req, res) => {
         });
         res.end(JSON.stringify(adminStats));
     } else {
-        res.send("not authenticated, invalid token");
-        res.end();
+        res.statusCode = 401;
+        res.header('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
     }
 })
 
@@ -323,16 +349,6 @@ app.get(getStatsEndPoint, (req, res) => {
  *                                  example: false
  */
 app.post(loginEndPoint, (req, res) => {
-    // LEAVE FOR REGISTRATION
-    // const username = 'admin';
-    // const saltRounds = 10;
-    // const password = '1234abcd';
-    // bcrypt.hash(password, saltRounds, (err, hash) => {
-    //     console.log(hash);
-    //     db.connect(() => {
-    //         db.query(`INSERT INTO user (username, password) VALUES ('${username}', '${hash}')`)
-    //     })
-    // })
     let body = "";
 
     req.on('data', chunk => {
@@ -367,7 +383,6 @@ app.post(loginEndPoint, (req, res) => {
                         res.header('Content-Type', 'application/json');
                         endpointStats.find(obj => obj.endpoint === loginEndPoint && obj.requests++);
                         res.cookie("jwt", adminToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: adminToken })).end();
-                        // res.end(JSON.stringify({ authorized: result, jwt:adminToken }));
                     })
                 } else {
                     res.statusCode = 401;
@@ -388,7 +403,7 @@ app.post(loginEndPoint, (req, res) => {
  *          "200":
  *              description: Successfully made the GET request.
  *                  This request will return an array of all the user highscores.
- *                  Each object in the array will have an id, a user id, the user's name, and the user's highscore.
+ *                  Each object in the array will have an id, a user id, the user's name, the user's highscore, and the category.
  *              content:
  *                  application/json:
  *                      schema:
@@ -408,6 +423,21 @@ app.post(loginEndPoint, (req, res) => {
  *                                  highscore:
  *                                      type: integer
  *                                      example: 200
+ *                                  category:
+ *                                      type: string
+ *                                      example: JavaScript
+ *          "401":
+ *              description: Unable to make the GET request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.get(AllScoresEndPoint, (req, res) => {
     db.connect(() => {
@@ -423,8 +453,8 @@ app.get(AllScoresEndPoint, (req, res) => {
                 res.end(JSON.stringify(result));
             } else {
                 res.statusCode = 401;
-                res.send("not authenticated to get all scores, invalid token");
-                res.end();
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
             }
         })
     })
@@ -439,11 +469,13 @@ app.get(AllScoresEndPoint, (req, res) => {
  *          - name: uuid
  *            in: path
  *            required: true
+ *            schema:
+ *              type: string
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
  *                  This request will return an array of all the highscores pertaining to a specific uuid (user).
- *                  Each object in the array will have an id, a user id, the user's name, and the user's highscore.
+ *                  Each object in the array will have an id, a user id, the user's name, the user's highscore, and the category.
  *              content:
  *                  application/json:
  *                      schema:
@@ -463,6 +495,21 @@ app.get(AllScoresEndPoint, (req, res) => {
  *                                  highscore:
  *                                      type: integer
  *                                      example: 200
+ *                                  category:
+ *                                      type: string
+ *                                      example: JavaScript
+ *          "401":
+ *              description: Unable to make the GET request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.get(getScoresByUUIDEndPoint, (req, res) => {
     db.connect(() => {
@@ -482,8 +529,8 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
                 res.end(JSON.stringify(result));
             } else {
                 res.statusCode = 401;
-                res.send("not authenticated to get your personal scores, invalid token");
-                res.end();
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
             }
         })
     })
@@ -498,6 +545,8 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
  *          - name: category
  *            in: path
  *            required: true
+ *            schema:
+ *              type: string
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
@@ -525,6 +574,18 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
  *                                  category:
  *                                      type: string
  *                                      example: JavaScript
+ *          "401":
+ *              description: Unable to make the GET request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.get(getScoresByCategoryEndPoint, (req, res) => {
     db.connect(() => {
@@ -540,8 +601,8 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
                 res.end(JSON.stringify(result));
             } else {
                 res.statusCode = 401;
-                res.send("not authenticated to get scores by selected categories, invalid token");
-                res.end();
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
             }
         })
     })
@@ -556,9 +617,13 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
  *          - name: uuid
  *            in: path
  *            required: true
+ *            schema:
+ *              type: string
  *          - name: category
  *            in: path
  *            required: true
+ *            schema:
+ *              type: string
  *      responses:
  *          "200":
  *              description: Successfully made the GET request.
@@ -586,6 +651,18 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
  *                                  category:
  *                                      type: string
  *                                      example: JavaScript
+ *          "401":
+ *              description: Unable to make the GET request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
     db.connect(() => {
@@ -601,17 +678,32 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
                 res.end(JSON.stringify(result));
             } else {
                 res.statusCode = 401;
-                res.send("not authenticated to get your personal scores by category, invalid token");
-                res.end();
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
             }
         })
     })
 })
 
 /**
- * A GET request that points to /API/v1/token
- * generates a jwt token as access token (note: not admin token)
- * returns the jwt token back to client as a cookie
+ * @swagger
+ * /API/v1/token:
+ *  get:
+ *      description: Used to get a JWT token to render API services.
+ *      responses:
+ *          "200":
+ *              description: Successfully made the GET request.
+ *                  This request will return a JWT token specific to a user that they can use to render API services.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  playerjwt:
+ *                                      type: string
+ *                                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoicGxheWVyIiwiaWF0IjoxNjM4MTYxMDQ4LCJleHAiOjE2MzgxNjI4NDh9.wwwxchdsP6HQDRjXGVYTZ8ENTybd-EUIi88T7BVQtbM
  */
 app.get(getToken, (req, res) => {
     accessToken = '';
@@ -625,17 +717,83 @@ app.get(getToken, (req, res) => {
     res.cookie("playerjwt", accessToken, { httpOnly: false }).send(JSON.stringify({ playerjwt: accessToken })).end();
 })
 
+/**
+ * @swagger
+ * /API/v1/scores/{uuid}/{category}:
+ *  delete:
+ *      description: Used to delete all scores for a user with a given UUID and given category.
+ *      parameters:
+ *          - name: uuid
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *          - name: category
+ *            in: path
+ *            required: true
+ *            schema:
+ *              type: string
+ *      responses:
+ *          "200":
+ *              description: Successfully made the DELETE request.
+ *                  This request deletes all of the highscores pertaining to a specific uuid (user) and category and returns the number of affected rows.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              affectedRows:
+ *                                  type: integer
+ *                                  example: 3
+ *          "400":
+ *              description: Unable to make the DELETE request because of an incorrect request body.
+ *                  This could be because of having the uuid or category in the wrong format.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Incorrect request body
+ *          "401":
+ *              description: Unable to make the DELETE request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
+ */
 app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
+    if (req.params.uuid && typeof (req.params.uuid) != 'string' && req.params.category && typeof (req.params.category) != 'string') {
+        res.statusCode = 400;
+        res.header('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: "Incorrect request body" }))
+        return
+    }
+
     db.connect(() => {
         db.query(`DELETE FROM score WHERE uuid = '${req.params.uuid}' AND category = '${req.params.category}'`, (err, result) => {
             if (err) {
                 console.error(err);
                 throw err;
             }
-            res.statusCode = 200;
-            res.header('Content-Type', 'application/json');
-            endpointStats.find(obj => obj.method === 'DELETE' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
-            res.end(JSON.stringify(result));
+            if (req.headers['set-cookie'] == accessToken) {
+                res.statusCode = 200;
+                res.header('Content-Type', 'application/json');
+                endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
+                res.end(JSON.stringify({ affectedRows: result.affectedRows }));
+            } else {
+                res.statusCode = 401;
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
+            }
         })
     })
 })
@@ -649,6 +807,8 @@ app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
  *          - name: uuid
  *            in: path
  *            required: true
+ *            schema:
+ *              type: string
  *      responses:
  *          "200":
  *              description: Successfully made the DELETE request.
@@ -662,9 +822,8 @@ app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
  *                                  type: integer
  *                                  example: 3
  *          "400":
- *              description: Unable to make the POST request because of an incorrect request body.
- *                  This could be because of either a missing uuid, name, or highscore field in the request body.
- *                  The error could also be caused by having extra fields in the request body.
+ *              description: Unable to make the DELETE request because of an incorrect request body.
+ *                  This could be because of having the uuid in the wrong format.
  *              content:
  *                  application/json:
  *                      schema:
@@ -674,6 +833,18 @@ app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
  *                                  type: string
  *                                  description: error message
  *                                  example: Incorrect request body
+ *          "401":
+ *              description: Unable to make the DELETE request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.delete(getScoresByUUIDEndPoint, (req, res) => {
     if (req.params.uuid && typeof (req.params.uuid) != 'string') {
@@ -696,13 +867,65 @@ app.delete(getScoresByUUIDEndPoint, (req, res) => {
                 res.end(JSON.stringify({ affectedRows: result.affectedRows }));
             } else {
                 res.statusCode = 401;
-                res.send("not authenticated to delete all your personal scores, invalid token");
-                res.end();
+                res.header('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
             }
         })
     })
 })
 
+/**
+ * @swagger
+ * /API/v1/scores/{id}:
+ *  put:
+ *      description: Used to update a specific score for a user.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          id:
+ *                              type: string
+ *                              description: the score of the ID
+ *      responses:
+ *          "200":
+ *              description: Successfully made the PUT request.
+ *                  The response from the POST request is a boolean called "authorized" that shows whether or not the user is authorized or not.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              affectedRows:
+ *                                  type: integer
+ *                                  example: 3
+ *          "400":
+ *              description: Unable to make the PUT request because of an incorrect request body.
+ *                  This could be because of an ID that doesn't exist or if the ID is in the wrong format.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Incorrect request body
+ *          "401":
+ *              description: Unable to make the PUT request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
+ */
 app.put(updateScoreByIDEndPoint, (req, res) => {
     if (req.params.id && typeof (req.params.id) != 'string') {
         res.statusCode = 400;
@@ -736,12 +959,12 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
                     res.statusCode = 200;
                     res.header('Content-Type', 'application/json');
                     endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
-                    res.end(JSON.stringify(result));
+                    res.end(JSON.stringify({ affectedRows: result.affectedRows }));
                 } else {
                     res.statusCode = 401;
-                    res.send("not authenticated to change your name, invalid token");
-                    res.end();
-                }    
+                    res.header('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
+                }
             }).catch(err => console.log(err));
     })
 })
@@ -750,7 +973,7 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
  * @swagger
  * /API/v1/scores:
  *  post:
- *      description: Used to post a logged in user's score or get a user's scores by their uuid.
+ *      description: Used to post a logged in user's score.
  *      requestBody:
  *          required: true
  *          content:
@@ -822,8 +1045,8 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
  *                                      example: 200
  *          "400":
  *              description: Unable to make the POST request because of an incorrect request body.
- *                  This could be because of either a missing uuid, name, or highscore field in the request body.
- *                  The error could also be caused by having extra fields in the request body.
+ *                  This could be because of either a missing uuid or name field in the request body.
+ *                  The error could also be caused by having extra fields in the request body or the uuid or name in the wrong format.
  *              content:
  *                  application/json:
  *                      schema:
@@ -833,6 +1056,18 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
  *                                  type: string
  *                                  description: error message
  *                                  example: Incorrect request body
+ *          "401":
+ *              description: Unable to make the PUT request because of authorization.
+ *                  This is because the user did not send a valid token in the header when making the request.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              error:
+ *                                  type: string
+ *                                  description: error message
+ *                                  example: Not authenticated to start game. Invalid token.
  */
 app.post(AllScoresEndPoint, (req, res) => {
     let body = "";
@@ -873,42 +1108,13 @@ app.post(AllScoresEndPoint, (req, res) => {
                     res.end(JSON.stringify(result));
                 } else {
                     res.statusCode = 401;
-                    res.send("not authenticated to post your score, invalid token");
-                    res.end();
+                    res.header('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ error: 'Not authenticated to start game. Invalid token.'}));
                 }
-                
             })
         })
     })
 })
-
-// DO NOT UNCOMMMENT, ALREADY POPULATED DB
-
-// app.get("/", (req, res) => {
-//     fs.readFile('./assets/questionsv2.json', (err, data) => {
-//         if (err) throw err;
-//         const questionArr = JSON.parse(data);
-
-//         let sql = "INSERT INTO question(question, choice1, choice2, choice3, choice4, answer, category) VALUES ";
-//         for (let i = 0; i < questionArr.length - 1; i++) {
-//             let q = questionArr[i];
-//             sql += `("${q.question}","${q.choice1}","${q.choice2}","${q.choice3}","${q.choice4}","${q.answer}","${q.category}"),`
-//         }
-//         let final = questionArr[questionArr.length - 1];
-//         sql += `("${final.question}","${final.choice1}","${final.choice2}","${final.choice3}","${final.choice4}","${final.answer}","${final.category}");`
-
-//         db.connect(() => {
-//             db.query(sql, (err, result) => {
-//                 if (err) {
-//                     console.error(err);
-//                     throw err;
-//                 }
-//                 res.statusCode = 200;
-//                 res.end(`Successfully inserted data: ${result}`);
-//             })
-//         })
-//     })
-// })
 
 app.listen(PORT, (err) => {
     if (err) throw err
