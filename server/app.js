@@ -711,12 +711,11 @@ app.get(getToken, (req, res) => {
     let playerToken = jwt.sign({
         data: 'player',
     }, TOKEN_SECRET, { expiresIn: 1800 });
-
+    accessToken.push(playerToken);
     res.statusCode = 200;
     res.header('Content-Type', 'application/json');
     endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getToken && obj.requests++);
-    res.cookie("playerjwt", accessToken, { httpOnly: false }).send(JSON.stringify({ playerjwt: accessToken })).end();
-    accessToken.push(playerToken);
+    res.cookie("playerjwt", playerToken, { httpOnly: false }).send(JSON.stringify({ playerjwt: playerToken })).end();
 })
 
 /**
