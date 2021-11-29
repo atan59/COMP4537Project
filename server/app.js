@@ -63,6 +63,11 @@ const endpointStats = [
         method: 'POST',
         endpoint: AllScoresEndPoint,
         requests: 0
+    },    
+    {
+        method: 'POST',
+        endpoint: loginEndPoint,
+        requests: 0
     },
     {
         method: 'DELETE',
@@ -360,6 +365,7 @@ app.post(loginEndPoint, (req, res) => {
                         }
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
+                        endpointStats.find(obj => obj.endpoint === loginEndPoint && obj.requests++);
                         res.cookie("jwt", adminToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: adminToken })).end();
                         // res.end(JSON.stringify({ authorized: result, jwt:adminToken }));
                     })
@@ -413,7 +419,7 @@ app.get(AllScoresEndPoint, (req, res) => {
             if (req.headers['set-cookie'] == accessToken) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
-                endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
+                endpointStats.find(obj => obj.method === "GET" && obj.endpoint === AllScoresEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
                 res.send("not authenticated to get all scores, invalid token");
