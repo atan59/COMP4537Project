@@ -1,4 +1,5 @@
-const getTokenURL = "http://localhost:3000/API/v1/token";
+// const getTokenURL = "http://localhost:3000/API/v1/token";
+const getTokenURL = "https://s2api4537.azurewebsites.net/API/v1/token";
 let splitJwt;
 
 // get player token on init

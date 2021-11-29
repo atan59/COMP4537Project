@@ -14,11 +14,11 @@ const cookieParser = require('cookie-parser');
 
 app.use(cookieParser());
 
-var whitelist = ['http://localhost:3000', 'https://4537.azurewebsites.net', 'http://127.0.0.1:5500' /** other domains if any */]
+var whitelist = ['http://localhost:3000','http://localhost:3000/4537/termproject/API/V1/documentation', 'https://4537.azurewebsites.net', 'https://s2api4537.azurewebsites.net', 'https://s2api4537.azurewebsites.net/4537/termproject/API/V1/documentation','http://127.0.0.1:5500', 'http://127.0.0.1:5500/4537/termproject/API/V1/documentation', 'http://127.0.0.1:5500/documentation' /** other domains if any */]
 var corsOptions = {
     credentials: true,
     origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
+        if (!origin || whitelist.indexOf(origin) !== -1) {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by CORS'))
@@ -61,6 +61,11 @@ const endpointStats = [
     {
         method: 'POST',
         endpoint: AllScoresEndPoint,
+        requests: 0
+    },    
+    {
+        method: 'POST',
+        endpoint: loginEndPoint,
         requests: 0
     },
     {
@@ -212,6 +217,7 @@ app.get(getAllEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to start game, invalid token");
                 res.end();
             }
@@ -359,6 +365,7 @@ app.post(loginEndPoint, (req, res) => {
                         }
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
+                        endpointStats.find(obj => obj.endpoint === loginEndPoint && obj.requests++);
                         res.cookie("jwt", adminToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: adminToken })).end();
                         // res.end(JSON.stringify({ authorized: result, jwt:adminToken }));
                     })
@@ -412,9 +419,10 @@ app.get(AllScoresEndPoint, (req, res) => {
             if (req.headers['set-cookie'] == accessToken) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
-                endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.requests++);
+                endpointStats.find(obj => obj.method === "GET" && obj.endpoint === AllScoresEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get all scores, invalid token");
                 res.end();
             }
@@ -473,6 +481,7 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
                 })
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get your personal scores, invalid token");
                 res.end();
             }
@@ -530,6 +539,7 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get scores by selected categories, invalid token");
                 res.end();
             }
@@ -590,6 +600,7 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get your personal scores by category, invalid token");
                 res.end();
             }
@@ -684,6 +695,7 @@ app.delete(getScoresByUUIDEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
                 res.end(JSON.stringify({ affectedRows: result.affectedRows }));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to delete all your personal scores, invalid token");
                 res.end();
             }
@@ -720,10 +732,16 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
                 sql = `UPDATE score SET name = '${userBody.name}' WHERE id = ${result[0].id}`;
                 return db.promise(sql);
             }).then(result => {
-                res.statusCode = 200;
-                res.header('Content-Type', 'application/json');
-                endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
-                res.end(JSON.stringify(result));
+                if (req.headers['set-cookie'] == accessToken) {
+                    res.statusCode = 200;
+                    res.header('Content-Type', 'application/json');
+                    endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
+                    res.end(JSON.stringify(result));
+                } else {
+                    res.statusCode = 401;
+                    res.send("not authenticated to change your name, invalid token");
+                    res.end();
+                }    
             }).catch(err => console.log(err));
     })
 })
@@ -848,10 +866,17 @@ app.post(AllScoresEndPoint, (req, res) => {
                     console.error(err);
                     throw err;
                 }
-                res.statusCode = 200;
-                res.header('Content-Type', 'application/json');
-                endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
-                res.end(JSON.stringify(result));
+                if (req.headers['set-cookie'] == accessToken) {
+                    res.statusCode = 200;
+                    res.header('Content-Type', 'application/json');
+                    endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
+                    res.end(JSON.stringify(result));
+                } else {
+                    res.statusCode = 401;
+                    res.send("not authenticated to post your score, invalid token");
+                    res.end();
+                }
+                
             })
         })
     })
