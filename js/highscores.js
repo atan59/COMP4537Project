@@ -31,6 +31,11 @@ const nameValidate = (name) => !(name === '')
 const lettersOnly = (event) => /[a-z]/i.test(event.key)
 
 const checkValidUpdate = (originalValue, newValue, scoreID) => {
+    if (!/[a-z]/i.test(newValue)) {
+        notyf.error('Stop injecting our site!')
+        return false
+    }
+
     if (!nameValidate(newValue)) {
         notyf.error('Your name cannot be empty!')
         return false

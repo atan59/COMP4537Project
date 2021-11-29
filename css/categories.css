@@ -11,7 +11,7 @@
 }
 
 #go-back-btn {
-    background: linear-gradient(90deg, rgb(245, 111, 66) 0%, rgb(245, 120, 66) 100%);
+    background: linear-gradient(90deg, rgb(245, 111, 66) 0%, rgb(245, 120, 66) 100%) !important;
 }
 
 #go-back-btn:hover {
