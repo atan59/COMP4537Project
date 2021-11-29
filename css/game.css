@@ -68,32 +68,6 @@ body {
     width: 0%;
 }
 
-@media screen and (max-width: 768px) {
-    #game {
-        height: 100%;
-        width: 100%;
-    }
-    
-    #question-container{
-        padding: 2%;
-    }
-    
-    #choices{
-        display: flex;
-        flex-direction: column;
-        width: 96%;
-        height: 100%;
-        flex-grow: 4;
-        overflow: hidden;
-    }
-    .choice-container {
-        min-width: 40rem;
-        height: 100%;
-        font-size: x-large;
-        position: relative;
-    }
-}
-
 pre {
     font-family: 'Menlo', 'Monaco', monospace !important;
     box-sizing: border-box !important;
@@ -102,4 +76,34 @@ pre {
     width: fit-content !important;
     display: inline-block !important;
     pointer-events: none !important;
+}
+
+@media screen and (max-width: 876px) {
+    .choice-container {
+        min-width: 40rem;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+}
+
+@media screen and (max-width: 465px) {
+    .choice-container {
+        min-width: 20rem;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+}
+
+@media screen and (max-height: 736px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .choice-container {
+        max-height: 8rem;
+    }
 }

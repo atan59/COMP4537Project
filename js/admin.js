@@ -33,7 +33,6 @@ loadEndpoints = async () => {
         credentials: 'include',
         method: 'GET'
     });
-    // response = await fetch(statsURL+ `?token=${token}`);
     if (response.ok) {
         endpoints = await response.json();
         endpointsBody.innerHTML = endpoints.map(stat => {
