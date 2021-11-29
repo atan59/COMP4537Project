@@ -3,7 +3,7 @@ const highScoresTable = document.querySelector('#scoresBody');
 const tableHeaders = document.querySelector('#tableHeaders');
 const scoresSelect = document.querySelector('#all-my');
 const categoriesSelect = document.querySelector('#categories');
-const clearHighScoresBtn = document.getElementById('clearHighScoresBtn');
+const clearScoresBtn = document.getElementById('clearScoresBtn');
 const uuid = localStorage.getItem('uuid');
 const url = 'http://localhost:3000/API/v1/scores/';
 const MAX_CHARS = 20;
@@ -31,13 +31,13 @@ const nameValidate = (name) => !(name === '')
 const lettersOnly = (event) => /[a-z]/i.test(event.key)
 
 const checkValidUpdate = (originalValue, newValue, scoreID) => {
-    if (!/[a-z]/i.test(newValue)) {
-        notyf.error('Stop injecting our site!')
+    if (!nameValidate(newValue)) {
+        notyf.error('Your name cannot be empty!')
         return false
     }
 
-    if (!nameValidate(newValue)) {
-        notyf.error('Your name cannot be empty!')
+    if (!/^[A-Za-z]+$/.test(newValue)) {
+        notyf.error('Stop injecting our site!')
         return false
     }
 
@@ -221,10 +221,7 @@ const getPersonalScores = async () => {
         }).join('');
     }
 }
-// TODO
-// maybe do a modal to ask if they're sure that they want to clear the scores
-// TODO2
-// maybe clear by category
+
 const deletePersonalScores = async (category) => {
     let requestURL = url + uuid;
 
@@ -247,8 +244,8 @@ scoresSelect.addEventListener('change', (event) => {
     currentScores = event.target.value;
     editState = false;
 
-    if (event.target.value == 'All Scores') clearHighScoresBtn.disabled = true;
-    if (event.target.value == 'My Scores') clearHighScoresBtn.disabled = false;
+    if (event.target.value == 'All Scores') clearScoresBtn.disabled = true;
+    if (event.target.value == 'My Scores') clearScoresBtn.disabled = false;
 
     if (event.target.value == 'All Scores' && !currentCategory) {
         getHighScores();
@@ -280,7 +277,7 @@ categoriesSelect.addEventListener('change', event => {
     if (currentScores == 'All Scores') getFilteredScores(event.target.value);
 })
 
-clearHighScoresBtn.addEventListener('click', () => deletePersonalScores(currentCategory));
+clearScoresBtn.addEventListener('click', () => deletePersonalScores(currentCategory));
 
 // Invocations
 getHighScores();
