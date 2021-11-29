@@ -225,7 +225,7 @@ app.get(getAllEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (accessToken.includes(req.headers['set-cookie'])) {
+            if (accessToken.indexOf(req.headers['set-cookie'][0]) >= 0) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
