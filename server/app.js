@@ -217,6 +217,7 @@ app.get(getAllEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to start game, invalid token");
                 res.end();
             }
@@ -421,6 +422,7 @@ app.get(AllScoresEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.method === "GET" && obj.endpoint === AllScoresEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get all scores, invalid token");
                 res.end();
             }
@@ -479,6 +481,7 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
                 })
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get your personal scores, invalid token");
                 res.end();
             }
@@ -536,6 +539,7 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get scores by selected categories, invalid token");
                 res.end();
             }
@@ -596,6 +600,7 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
                 res.end(JSON.stringify(result));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to get your personal scores by category, invalid token");
                 res.end();
             }
@@ -690,6 +695,7 @@ app.delete(getScoresByUUIDEndPoint, (req, res) => {
                 endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
                 res.end(JSON.stringify({ affectedRows: result.affectedRows }));
             } else {
+                res.statusCode = 401;
                 res.send("not authenticated to delete all your personal scores, invalid token");
                 res.end();
             }
@@ -732,6 +738,7 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
                     endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
                     res.end(JSON.stringify(result));
                 } else {
+                    res.statusCode = 401;
                     res.send("not authenticated to change your name, invalid token");
                     res.end();
                 }    
@@ -865,6 +872,7 @@ app.post(AllScoresEndPoint, (req, res) => {
                     endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
                     res.end(JSON.stringify(result));
                 } else {
+                    res.statusCode = 401;
                     res.send("not authenticated to post your score, invalid token");
                     res.end();
                 }
