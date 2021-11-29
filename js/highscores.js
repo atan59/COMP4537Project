@@ -4,9 +4,9 @@ const scoresSelect = document.querySelector('#all-my');
 const categoriesSelect = document.querySelector('#categories');
 const clearHighScoresBtn = document.getElementById('clearHighScoresBtn');
 const uuid = localStorage.getItem('uuid');
-const url = 'http://localhost:3000/API/v1/scores/';
+// const url = 'http://localhost:3000/API/v1/scores/';
 const MAX_CHARS = 20;
-// const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
+const url = 'https://s2api4537.azurewebsites.net/API/v1/scores';
 
 // Globals
 let highScores = [];
