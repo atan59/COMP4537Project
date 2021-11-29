@@ -2,34 +2,15 @@ body {
     color: #fff;
 }
 
-#game {
-    height: 100%;
-    width: 100%;
-}
-
-#question-container{
-    padding: 2%;
-}
-
-#choices{
-    display: flex;
-    flex-direction: column;
-    width: 96%;
-    height: 100%;
-    flex-grow: 4;
-    overflow: hidden;
-}
-
 .choice-container {
     display: flex;
     align-items: center;
     margin-bottom: 0.8rem;
     width: 100%;
-    height: 100%;
     border-radius: 4px;
     background: rgb(18, 93, 255);
-    font-size: x-large;
-    position: relative;
+    font-size: 3rem;
+    min-width: 80rem;
 }
 
 .choice-container:hover {
@@ -88,8 +69,28 @@ body {
 }
 
 @media screen and (max-width: 768px) {
+    #game {
+        height: 100%;
+        width: 100%;
+    }
+    
+    #question-container{
+        padding: 2%;
+    }
+    
+    #choices{
+        display: flex;
+        flex-direction: column;
+        width: 96%;
+        height: 100%;
+        flex-grow: 4;
+        overflow: hidden;
+    }
     .choice-container {
         min-width: 40rem;
+        height: 100%;
+        font-size: x-large;
+        position: relative;
     }
 }
 

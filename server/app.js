@@ -22,7 +22,6 @@ var corsOptions = {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by CORS'))
-            // callback(null, true)
         }
     }
 }
@@ -721,10 +720,15 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
                 sql = `UPDATE score SET name = '${userBody.name}' WHERE id = ${result[0].id}`;
                 return db.promise(sql);
             }).then(result => {
-                res.statusCode = 200;
-                res.header('Content-Type', 'application/json');
-                endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
-                res.end(JSON.stringify(result));
+                if (req.headers['set-cookie'] == accessToken) {
+                    res.statusCode = 200;
+                    res.header('Content-Type', 'application/json');
+                    endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
+                    res.end(JSON.stringify(result));
+                } else {
+                    res.send("not authenticated to change your name, invalid token");
+                    res.end();
+                }    
             }).catch(err => console.log(err));
     })
 })
@@ -849,10 +853,16 @@ app.post(AllScoresEndPoint, (req, res) => {
                     console.error(err);
                     throw err;
                 }
-                res.statusCode = 200;
-                res.header('Content-Type', 'application/json');
-                endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
-                res.end(JSON.stringify(result));
+                if (req.headers['set-cookie'] == accessToken) {
+                    res.statusCode = 200;
+                    res.header('Content-Type', 'application/json');
+                    endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
+                    res.end(JSON.stringify(result));
+                } else {
+                    res.send("not authenticated to post your score, invalid token");
+                    res.end();
+                }
+                
             })
         })
     })

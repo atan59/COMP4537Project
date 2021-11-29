@@ -14,6 +14,7 @@ const MAX_HIGH_SCORES = 5;
 
 // Globals
 let response = null;
+let splitJwt = document.cookie.split(';').pop();
 let notyf = new Notyf({
     duration: 5000,
     position: {
@@ -48,8 +49,10 @@ saveHighScore = async e => {
     response = await fetch(postScoresURL, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Set-Cookie': splitJwt
         },
+        credentials: 'include',
         body: JSON.stringify(data)
     });
 
