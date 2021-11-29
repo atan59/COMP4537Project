@@ -40,8 +40,8 @@ const updateScoreByIDEndPoint = '/API/v1/scores/:id';
 const getToken = '/API/v1/token';
 
 // Globals
-let adminToken;
-let accessToken;
+let adminToken = [];
+let accessToken = [];
 const endpointStats = [
     {
         method: 'GET',
@@ -211,7 +211,7 @@ app.get(getAllEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (req.headers['set-cookie'] == accessToken) {
+            if (accessToken.includes(req.headers['set-cookie'])) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.endpoint === getAllEndPoint && obj.requests++);
@@ -254,7 +254,7 @@ app.get(getAllEndPoint, (req, res) => {
  *                                      example: 1
  */
 app.get(getStatsEndPoint, (req, res) => {
-    if (req.headers['set-cookie'] == adminToken) {
+    if (adminToken.includes(req.headers['set-cookie'])) {
         res.statusCode = 200;
         res.header('Content-Type', 'application/json');
         const adminStats = endpointStats.map(obj => {
@@ -341,8 +341,8 @@ app.post(loginEndPoint, (req, res) => {
 
     req.on('end', () => {
         const loginCredentials = JSON.parse(body);
-        adminToken = '';
-        adminToken = jwt.sign({
+
+        let token = jwt.sign({
             data: loginCredentials.username,
         }, TOKEN_SECRET, { expiresIn: 1800 });
         if (typeof (loginCredentials.username) != 'string' && typeof (loginCredentials.password) != 'string') {
@@ -351,6 +351,8 @@ app.post(loginEndPoint, (req, res) => {
             res.end(JSON.stringify({ error: "Incorrect request body" }))
             return
         }
+        adminToken.push(token)
+
         db.connect(() => {
             db.query(`SELECT * FROM user WHERE username = '${loginCredentials.username}'`, (err, result) => {
                 if (err) {
@@ -416,7 +418,7 @@ app.get(AllScoresEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (req.headers['set-cookie'] == accessToken) {
+            if (accessToken.includes(req.headers['set-cookie'])) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.method === "GET" && obj.endpoint === AllScoresEndPoint && obj.requests++);
@@ -471,7 +473,7 @@ app.get(getScoresByUUIDEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (req.headers['set-cookie'] == accessToken) {
+            if (accessToken.includes(req.headers['set-cookie'])) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => {
@@ -533,7 +535,7 @@ app.get(getScoresByCategoryEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (req.headers['set-cookie'] == accessToken) {
+            if (accessToken.includes(req.headers['set-cookie'])) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.endpoint === getScoresByCategoryEndPoint && obj.requests++);
@@ -594,7 +596,7 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (req.headers['set-cookie'] == accessToken) {
+            if (accessToken.includes(req.headers['set-cookie'])) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getScoresByUUIDAndCategoryEndPoint && obj.requests++);
@@ -614,8 +616,7 @@ app.get(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
  * returns the jwt token back to client as a cookie
  */
 app.get(getToken, (req, res) => {
-    accessToken = '';
-    accessToken = jwt.sign({
+    let playerToken = jwt.sign({
         data: 'player',
     }, TOKEN_SECRET, { expiresIn: 1800 });
 
@@ -623,6 +624,7 @@ app.get(getToken, (req, res) => {
     res.header('Content-Type', 'application/json');
     endpointStats.find(obj => obj.method === 'GET' && obj.endpoint === getToken && obj.requests++);
     res.cookie("playerjwt", accessToken, { httpOnly: false }).send(JSON.stringify({ playerjwt: accessToken })).end();
+    accessToken.push(playerToken);
 })
 
 app.delete(getScoresByUUIDAndCategoryEndPoint, (req, res) => {
@@ -689,7 +691,7 @@ app.delete(getScoresByUUIDEndPoint, (req, res) => {
                 console.error(err);
                 throw err;
             }
-            if (req.headers['set-cookie'] == accessToken) {
+            if (accessToken.includes(req.headers['set-cookie'])) {
                 res.statusCode = 200;
                 res.header('Content-Type', 'application/json');
                 endpointStats.find(obj => obj.method === "DELETE" && obj.endpoint === getScoresByUUIDEndPoint && obj.requests++);
@@ -732,7 +734,7 @@ app.put(updateScoreByIDEndPoint, (req, res) => {
                 sql = `UPDATE score SET name = '${userBody.name}' WHERE id = ${result[0].id}`;
                 return db.promise(sql);
             }).then(result => {
-                if (req.headers['set-cookie'] == accessToken) {
+                if (accessToken.includes(req.headers['set-cookie'])) {
                     res.statusCode = 200;
                     res.header('Content-Type', 'application/json');
                     endpointStats.find(obj => obj.endpoint === updateScoreByIDEndPoint && obj.requests++);
@@ -866,7 +868,7 @@ app.post(AllScoresEndPoint, (req, res) => {
                     console.error(err);
                     throw err;
                 }
-                if (req.headers['set-cookie'] == accessToken) {
+                if (accessToken.includes(req.headers['set-cookie'])) {
                     res.statusCode = 200;
                     res.header('Content-Type', 'application/json');
                     endpointStats.find(obj => obj.endpoint === AllScoresEndPoint && obj.method === 'POST' && obj.requests++);
