@@ -384,7 +384,7 @@ app.post(loginEndPoint, (req, res) => {
                         res.statusCode = 200;
                         res.header('Content-Type', 'application/json');
                         endpointStats.find(obj => obj.endpoint === loginEndPoint && obj.requests++);
-                        res.cookie("jwt", adminToken, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: adminToken })).end();
+                        res.cookie("jwt", token, { httpOnly: false }).send(JSON.stringify({ authorized: result, jwt: token })).end();
                     })
                 } else {
                     res.statusCode = 401;
